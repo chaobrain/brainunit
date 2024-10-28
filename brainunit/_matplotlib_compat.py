@@ -16,11 +16,10 @@
 from __future__ import annotations
 
 import importlib.util
-from contextlib import ContextDecorator
 
 import numpy as np
 
-from ._base import Unit, Quantity
+from ._base import Quantity, fail_for_dimension_mismatch
 from ._unit_common import radian
 
 matplotlib_installed = importlib.util.find_spec('matplotlib') is not None
@@ -47,11 +46,6 @@ if matplotlib_installed:
 
 
   class MplQuantityConverter(units.ConversionInterface):
-    def __init__(self):
-      # Keep track of original converter in case the context manager is
-      # used in a nested way.
-      self._original_converter = {Quantity: units.registry.get(Quantity)}
-      units.registry[Quantity] = self
 
     @staticmethod
     def axisinfo(unit, axis):
@@ -68,9 +62,16 @@ if matplotlib_installed:
     @staticmethod
     def convert(val, unit, axis):
       if isinstance(val, Quantity):
+        # check dimension
+        fail_for_dimension_mismatch(val.unit, unit)
+        # check unit
+        if val.unit != unit:
+          # scale to target unit
+          return val.to(unit).mantissa
         return val.mantissa
       elif isinstance(val, list) and val and isinstance(val[0], Quantity):
-        return [v.mantissa for v in val]
+        fail_for_dimension_mismatch(val[0].unit, unit)
+        return [v.to(unit).mantissa if v.unit != unit else v.mantissa for v in val]
       else:
         return val
 
@@ -80,11 +81,5 @@ if matplotlib_installed:
         return x.unit
       return None
 
-    def __enter__(self):
-      return self
 
-    def __exit__(self, type, value, tb):
-      if self._original_converter[Quantity] is None:
-        del units.registry[Quantity]
-      else:
-        units.registry[Quantity] = self._original_converter[Quantity]
+  units.registry[Quantity] = MplQuantityConverter()
