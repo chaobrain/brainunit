@@ -24,8 +24,10 @@ from ._unit_common import radian
 
 matplotlib_installed = importlib.util.find_spec('matplotlib') is not None
 
+__all__ = ["set_axis_unit"]
+
 if matplotlib_installed:
-  from matplotlib import ticker, units
+  from matplotlib import ticker, units, pyplot as plt
 
 
   def rad_fn(
@@ -83,3 +85,43 @@ if matplotlib_installed:
 
 
   units.registry[Quantity] = MplQuantityConverter()
+
+
+  def set_axis_unit(axis_index, target_unit, ax=None, precision=None):
+    """
+    Set the scale of the specified axis to the target unit.
+
+    Parameters:
+    - axis_index: index of the axis (0 for x-axis, 1 for y-axis)
+    - target_unit: target unit to convert the axis scale to
+    - ax: matplotlib axis object
+    - auto_precision: automatically adjust the precision of the axis labels
+    """
+    if ax is None:
+      ax = plt.gca()
+
+    if axis_index == 0:
+      axis = ax.xaxis
+    elif axis_index == 1:
+      axis = ax.yaxis
+    else:
+      raise ValueError("Invalid axis index. Use 0 for x-axis or 1 for y-axis.")
+
+    # Get the current unit of the axis
+    current_unit = axis.units
+
+    # Set the formatter and locator
+    if precision is not None:
+      formatter = lambda x, _: f"{((x * current_unit).to(target_unit)).mantissa:.{precision}f}"
+    else:
+      formatter = lambda x, _: f"{((x * current_unit).to(target_unit)).mantissa}"
+
+
+    axis.set_major_formatter(ticker.FuncFormatter(formatter))
+    axis.set_major_locator(ticker.AutoLocator())
+
+    # Update label
+    if axis_index == 0:
+      ax.set_xlabel(f"{ax.get_xlabel()} ({target_unit})")
+    else:
+      ax.set_ylabel(f"{ax.get_ylabel()} ({target_unit})")
