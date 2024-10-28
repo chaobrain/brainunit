@@ -125,3 +125,5 @@ if matplotlib_installed:
       ax.set_xlabel(f"{ax.get_xlabel()} ({target_unit})")
     else:
       ax.set_ylabel(f"{ax.get_ylabel()} ({target_unit})")
+else:
+  set_axis_unit = None
