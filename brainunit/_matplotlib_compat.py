@@ -16,18 +16,39 @@
 from __future__ import annotations
 
 import importlib.util
+from typing import List
 
 import numpy as np
+from braincore.typing import ArrayLike
 
-from ._base import Quantity, fail_for_dimension_mismatch
-from ._unit_common import radian
+from ._base import Quantity, fail_for_dimension_mismatch, UNITLESS
 
 matplotlib_installed = importlib.util.find_spec('matplotlib') is not None
 
-__all__ = ["set_axis_unit"]
+__all__ = [
+  "set_axis_unit",
+]
 
 if matplotlib_installed:
   from matplotlib import ticker, units, pyplot as plt
+  from matplotlib.lines import Line2D
+
+  setattr(plt, "_plot", plt.plot)
+
+
+  def plotq(
+      *args: float | ArrayLike | str,
+      scalex: bool = True,
+      scaley: bool = True,
+      data=None,
+      **kwargs,
+  ) -> List[Line2D]:
+    # args to Quantity
+    args = [arg if isinstance(arg, Quantity) else Quantity(arg) for arg in args]
+    return plt._plot(*args, scalex=scalex, scaley=scaley, data=data, **kwargs)
+
+
+  setattr(plt, "plot", plotq)
 
 
   def rad_fn(
@@ -51,12 +72,8 @@ if matplotlib_installed:
 
     @staticmethod
     def axisinfo(unit, axis):
-      if unit == radian:
-        return units.AxisInfo(
-          majloc=ticker.MultipleLocator(base=np.pi / 2),
-          majfmt=ticker.FuncFormatter(rad_fn),
-          label=unit.dispname,
-        )
+      if unit == UNITLESS:
+        return units.AxisInfo()
       elif unit is not None:
         return units.AxisInfo(label=unit.dispname)
       return None
@@ -81,7 +98,7 @@ if matplotlib_installed:
     def default_units(x, axis):
       if hasattr(x, "unit"):
         return x.unit
-      return None
+      return UNITLESS
 
 
   units.registry[Quantity] = MplQuantityConverter()
@@ -115,7 +132,6 @@ if matplotlib_installed:
       formatter = lambda x, _: f"{((x * current_unit).to(target_unit)).mantissa:.{precision}f}"
     else:
       formatter = lambda x, _: f"{((x * current_unit).to(target_unit)).mantissa}"
-
 
     axis.set_major_formatter(ticker.FuncFormatter(formatter))
     axis.set_major_locator(ticker.AutoLocator())
