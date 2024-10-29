@@ -19,7 +19,7 @@ import importlib.util
 from typing import List
 
 import numpy as np
-from braincore.typing import ArrayLike
+from brainstate.typing import ArrayLike
 
 from ._base import Quantity, fail_for_dimension_mismatch, UNITLESS
 
