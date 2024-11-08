@@ -33,6 +33,7 @@ __all__ = [
 def after_all(x): pass
 def reduce(x): pass
 def reduce_precision(x): pass
+def broadcast_shapes(*shapes): pass
 def is_finite(x): pass
 def conv_dimension_numbers(x): pass
 def conv_general_dilated(x): pass
