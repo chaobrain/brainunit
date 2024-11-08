@@ -35,7 +35,7 @@ __all__ = [
 
     # math funcs only accept unitless (n-ary)
     'betainc', 'betainc_gradx', 'igamma_gradx',
-    'igamma_grada', 'igammac_gradx', 'igammac_grada', 'polygamma_gradm', 'polygamma_gradx',
+    'igamma_grada', 'igammac_gradx', 'igammac_grada', 'polygamma_gradx',
 
     # Elementwise bit operations (unary)
 
@@ -46,49 +46,49 @@ __all__ = [
 # math funcs only accept unitless (unary)
 # ---------------------------------------
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def acos(
     x: Union[Quantity, jax.typing.ArrayLike],
     unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
     return _fun_accept_unitless_unary(lax.acos, x, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def acosh(
     x: Union[Quantity, jax.typing.ArrayLike],
     unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
     return _fun_accept_unitless_unary(lax.acosh, x, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def asin(
     x: Union[Quantity, jax.typing.ArrayLike],
     unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
     return _fun_accept_unitless_unary(lax.asin, x, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def asinh(
     x: Union[Quantity, jax.typing.ArrayLike],
     unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
     return _fun_accept_unitless_unary(lax.asinh, x, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def atan(
     x: Union[Quantity, jax.typing.ArrayLike],
     unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
     return _fun_accept_unitless_unary(lax.atan, x, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def atanh(
     x: Union[Quantity, jax.typing.ArrayLike],
     unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
     return _fun_accept_unitless_unary(lax.atanh, x, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def collapse(
     x: Union[Quantity, jax.typing.ArrayLike],
     start_dimension: int,
@@ -98,7 +98,7 @@ def collapse(
     return _fun_accept_unitless_unary(lax.collapse, x, start_dimension, end_dimension,
                                       unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def cumlogsumexp(
     x: Union[Quantity, jax.typing.ArrayLike],
     axis: Optional[int] = 0,
@@ -108,56 +108,56 @@ def cumlogsumexp(
     return _fun_accept_unitless_unary(lax.cumlogsumexp, x, axis, reverse,
                                       unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def bessel_i0e(
     x: Union[Quantity, jax.typing.ArrayLike],
     unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
     return _fun_accept_unitless_unary(lax.bessel_i0e, x, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def bessel_i1e(
     x: Union[Quantity, jax.typing.ArrayLike],
     unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
     return _fun_accept_unitless_unary(lax.bessel_i1e, x, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def digamma(
     x: Union[Quantity, jax.typing.ArrayLike],
     unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
     return _fun_accept_unitless_unary(lax.digamma, x, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def lgamma(
     x: Union[Quantity, jax.typing.ArrayLike],
     unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
     return _fun_accept_unitless_unary(lax.lgamma, x, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def erf(
     x: Union[Quantity, jax.typing.ArrayLike],
     unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
     return _fun_accept_unitless_unary(lax.erf, x, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def erfc(
     x: Union[Quantity, jax.typing.ArrayLike],
     unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
     return _fun_accept_unitless_unary(lax.erfc, x, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def erf_inv(
     x: Union[Quantity, jax.typing.ArrayLike],
     unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
     return _fun_accept_unitless_unary(lax.erf_inv, x, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def logistic(
     x: Union[Quantity, jax.typing.ArrayLike],
     unit_to_scale: Optional[Unit] = None,
@@ -168,7 +168,7 @@ def logistic(
 
 # math funcs only accept unitless (binary)
 # ----------------------------------------
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def atan2(
     x: Union[jax.typing.ArrayLike, Quantity],
     y: Union[jax.typing.ArrayLike, Quantity],
@@ -176,7 +176,7 @@ def atan2(
 ) -> jax.Array:
     return _fun_accept_unitless_binary(lax.atan2, x, y, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def polygamma(
     x: Union[jax.typing.ArrayLike, Quantity],
     y: Union[jax.typing.ArrayLike, Quantity],
@@ -184,7 +184,7 @@ def polygamma(
 ) -> jax.Array:
     return _fun_accept_unitless_binary(lax.polygamma, x, y, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def igamma(
     x: Union[jax.typing.ArrayLike, Quantity],
     y: Union[jax.typing.ArrayLike, Quantity],
@@ -192,7 +192,7 @@ def igamma(
 ) -> jax.Array:
     return _fun_accept_unitless_binary(lax.igamma, x, y, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def igammac(
     x: Union[jax.typing.ArrayLike, Quantity],
     y: Union[jax.typing.ArrayLike, Quantity],
@@ -200,7 +200,7 @@ def igammac(
 ) -> jax.Array:
     return _fun_accept_unitless_binary(lax.igammac, x, y, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def igamma_grad_a(
     x: Union[jax.typing.ArrayLike, Quantity],
     y: Union[jax.typing.ArrayLike, Quantity],
@@ -208,7 +208,7 @@ def igamma_grad_a(
 ) -> jax.Array:
     return _fun_accept_unitless_binary(lax.igamma_grad_a, x, y, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def random_gamma_grad(
     x: Union[jax.typing.ArrayLike, Quantity],
     y: Union[jax.typing.ArrayLike, Quantity],
@@ -216,7 +216,7 @@ def random_gamma_grad(
 ) -> jax.Array:
     return _fun_accept_unitless_binary(lax.random_gamma_grad, x, y, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def zeta(
     x: Union[jax.typing.ArrayLike, Quantity],
     q: Union[jax.typing.ArrayLike, Quantity],
@@ -251,7 +251,7 @@ def _fun_accept_unitless_nary(
     return func(*args, **kwargs)
 
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def betainc(
     a: Union[jax.typing.ArrayLike, Quantity],
     b: Union[jax.typing.ArrayLike, Quantity],
@@ -261,7 +261,7 @@ def betainc(
     return _fun_accept_unitless_nary(lax.betainc, a, b, x,
                                      quantity_num=3, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def betainc_gradx(
     g: Union[jax.typing.ArrayLike, Quantity],
     a: Union[jax.typing.ArrayLike, Quantity],
@@ -272,7 +272,7 @@ def betainc_gradx(
     return _fun_accept_unitless_nary(lax.betainc_gradx, g, a, b, x,
                                      quantity_num=4, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def igamma_gradx(
     g: Union[jax.typing.ArrayLike, Quantity],
     a: Union[jax.typing.ArrayLike, Quantity],
@@ -282,7 +282,7 @@ def igamma_gradx(
     return _fun_accept_unitless_nary(lax.igamma_gradx, g, a, x,
                                      quantity_num=3, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def igamma_grada(
     g: Union[jax.typing.ArrayLike, Quantity],
     a: Union[jax.typing.ArrayLike, Quantity],
@@ -292,7 +292,7 @@ def igamma_grada(
     return _fun_accept_unitless_nary(lax.igamma_grada, g, a, x,
                                      quantity_num=3, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def igammac_gradx(
     g: Union[jax.typing.ArrayLike, Quantity],
     a: Union[jax.typing.ArrayLike, Quantity],
@@ -302,7 +302,7 @@ def igammac_gradx(
     return _fun_accept_unitless_nary(lax.igammac_gradx, g, a, x,
                                      quantity_num=3, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def igammac_grada(
     g: Union[jax.typing.ArrayLike, Quantity],
     a: Union[jax.typing.ArrayLike, Quantity],
@@ -312,7 +312,7 @@ def igammac_grada(
     return _fun_accept_unitless_nary(lax.igammac_grada, g, a, x,
                                      quantity_num=3, unit_to_scale=unit_to_scale)
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def polygamma_gradx(
     g: Union[jax.typing.ArrayLike, Quantity],
     m: Union[jax.typing.ArrayLike, Quantity],
@@ -324,7 +324,7 @@ def polygamma_gradx(
 
 
 # Elementwise bit operations (binary)
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def shift_left(
     x: Union[Quantity, jax.typing.ArrayLike],
     y: Union[Quantity, jax.typing.ArrayLike]
@@ -332,7 +332,7 @@ def shift_left(
     return _fun_unitless_binary(lax.shift_left, x, y)
 
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def shift_right_arithmetic(
     x: Union[Quantity, jax.typing.ArrayLike],
     y: Union[Quantity, jax.typing.ArrayLike]
@@ -340,7 +340,7 @@ def shift_right_arithmetic(
     return _fun_unitless_binary(lax.shift_right_arithmetic, x, y)
 
 
-@set_module_as('brainunit.math')
+@set_module_as('brainunit.lax')
 def shift_right_logical(
     x: Union[Quantity, jax.typing.ArrayLike],
     y: Union[Quantity, jax.typing.ArrayLike]

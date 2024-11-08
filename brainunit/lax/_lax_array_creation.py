@@ -13,6 +13,16 @@
 # limitations under the License.
 # ==============================================================================
 
+import jax
+from jax import lax
+
+from .._base import Unit, Quantity
+from typing import Optional, Union, Sequence
+
+from brainunit._misc import set_module_as
+
+Shape = Union[int, Sequence[int]]
+
 __all__ = [
     # array creation(given shape)
 
@@ -29,10 +39,61 @@ __all__ = [
 ]
 
 
+
+
 # array creation (given array)
-def zeros_like_array(a, dtype=None, order='K', subok=True, shape=None): pass
+@set_module_as('brainunit.lax')
+def zeros_like_array(
+    x: Union[Quantity, jax.typing.ArrayLike],
+    unit: Optional[Unit] = None,
+) -> Union[Quantity, jax.Array]:
+    if isinstance(x, Quantity):
+        if unit is not None:
+            assert isinstance(unit, Unit), 'unit must be an instance of Unit.'
+            x = x.in_unit(unit)
+        return Quantity(lax.zeros_like_array(x.mantissa), unit=x.unit)
+    else:
+        if unit is not None:
+            assert isinstance(unit, Unit), 'unit must be an instance of Unit.'
+            return lax.zeros_like_array(x) * unit
+        else:
+            return lax.zeros_like_array(x)
 
 # array creation (misc)
-def iota(start, stop, step=1, dtype=None): pass
-def broadcasted_iota(shape, start, stop, step=1, dtype=None): pass
-def zeros_like_shaped_array(a, dtype=None, order='K', subok=True, shape=None): pass
+@set_module_as('brainunit.lax')
+def iota(
+    dtype: jax.typing.DTypeLike,
+    size: int,
+    unit: Optional[Unit] = None,
+) -> Union[Quantity, jax.Array]:
+    if unit is not None:
+        assert isinstance(unit, Unit), 'unit must be an instance of Unit.'
+        return lax.iota(dtype, size) * unit
+    else:
+        return lax.iota(dtype, size)
+
+
+@set_module_as('brainunit.lax')
+def broadcasted_iota(
+    dtype: jax.typing.DTypeLike,
+    shape: Shape,
+    dimension: int,
+    _sharding=None,
+    unit: Optional[Unit] = None,
+) -> Union[Quantity, jax.Array]:
+    if unit is not None:
+        assert isinstance(unit, Unit), 'unit must be an instance of Unit.'
+        return lax.broadcasted_iota(dtype, shape, dimension, _sharding) * unit
+    else:
+        return lax.broadcasted_iota(dtype, shape, dimension, _sharding)
+
+
+def zeros_like_shaped_array(
+    aval: jax.ShapedArray,
+    unit: Optional[Unit] = None,
+):
+    if unit is not None:
+        assert isinstance(unit, Unit), 'unit must be an instance of Unit.'
+        return lax.zeros_like_shaped_array(aval) * unit
+    else:
+        return lax.zeros_like_shaped_array(aval)
