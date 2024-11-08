@@ -13,13 +13,13 @@
 # limitations under the License.
 # ==============================================================================
 
+from typing import Optional, Union, Sequence
+
 import jax
 from jax import lax
 
-from .._base import Unit, Quantity
-from typing import Optional, Union, Sequence
-
 from brainunit._misc import set_module_as
+from .._base import Unit, Quantity
 
 Shape = Union[int, Sequence[int]]
 
@@ -39,13 +39,11 @@ __all__ = [
 ]
 
 
-
-
 # array creation (given array)
 @set_module_as('brainunit.lax')
 def zeros_like_array(
-    x: Union[Quantity, jax.typing.ArrayLike],
-    unit: Optional[Unit] = None,
+        x: Union[Quantity, jax.typing.ArrayLike],
+        unit: Optional[Unit] = None,
 ) -> Union[Quantity, jax.Array]:
     if isinstance(x, Quantity):
         if unit is not None:
@@ -59,12 +57,13 @@ def zeros_like_array(
         else:
             return lax.zeros_like_array(x)
 
+
 # array creation (misc)
 @set_module_as('brainunit.lax')
 def iota(
-    dtype: jax.typing.DTypeLike,
-    size: int,
-    unit: Optional[Unit] = None,
+        dtype: jax.typing.DTypeLike,
+        size: int,
+        unit: Optional[Unit] = None,
 ) -> Union[Quantity, jax.Array]:
     if unit is not None:
         assert isinstance(unit, Unit), 'unit must be an instance of Unit.'
@@ -75,11 +74,11 @@ def iota(
 
 @set_module_as('brainunit.lax')
 def broadcasted_iota(
-    dtype: jax.typing.DTypeLike,
-    shape: Shape,
-    dimension: int,
-    _sharding=None,
-    unit: Optional[Unit] = None,
+        dtype: jax.typing.DTypeLike,
+        shape: Shape,
+        dimension: int,
+        _sharding=None,
+        unit: Optional[Unit] = None,
 ) -> Union[Quantity, jax.Array]:
     if unit is not None:
         assert isinstance(unit, Unit), 'unit must be an instance of Unit.'
@@ -89,8 +88,8 @@ def broadcasted_iota(
 
 
 def zeros_like_shaped_array(
-    aval: jax.ShapedArray,
-    unit: Optional[Unit] = None,
+        aval: jax.core.ShapedArray,
+        unit: Optional[Unit] = None,
 ):
     if unit is not None:
         assert isinstance(unit, Unit), 'unit must be an instance of Unit.'
