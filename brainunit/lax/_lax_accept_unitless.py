@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
+import enum
 from typing import Union, Optional, Callable, Sequence
 
 import jax
@@ -379,10 +380,16 @@ def shift_right_logical(
 
 
 # fft
+
+try:
+    FftType = jax.lax.FftType
+except:
+    FftType = enum.IntEnum
+
 @set_module_as('brainunit.lax')
 def fft(
         x: Union[Quantity, jax.typing.ArrayLike],
-        fft_type: jax.lax.FftType | str,
+        fft_type: FftType | str,
         fft_lengths: Sequence[int],
         unit_to_scale: Optional[Unit] = None,
 ):
