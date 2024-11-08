@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-import enum
 from typing import Union, Optional, Callable, Sequence
 
 import jax
@@ -384,7 +383,7 @@ def shift_right_logical(
 try:
     FftType = jax.lax.FftType
 except:
-    FftType = enum.IntEnum
+    FftType = None
 
 @set_module_as('brainunit.lax')
 def fft(
