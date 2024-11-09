@@ -13,15 +13,23 @@
 # limitations under the License.
 # ==============================================================================
 
+from __future__  import annotations
+
+from typing import Union
+
+import jax
+from jax import lax
+
+from .._base import Quantity, maybe_decimal, UNITLESS
+from .._misc import set_module_as
+from ..math._fun_remove_unit import _fun_remove_unit_unary, _fun_logic_unary, _fun_logic_binary
+
+
 __all__ = [
     # math funcs remove unit (unary)
     'population_count', 'clz',
 
-    # math funcs remove unit (binary)
-    'binary_func_placeholder',
-
     # logic funcs (unary)
-    'unary_logic_func_placeholder',
 
     # logic funcs (binary)
     'eq', 'ne', 'ge', 'gt', 'le', 'lt',
@@ -34,26 +42,81 @@ __all__ = [
 ]
 
 # math funcs remove unit (unary)
-def population_count(x): pass
-def clz(x): pass
+@set_module_as('brainunit.lax')
+def population_count(
+    x: Union[jax.typing.ArrayLike, Quantity],
+) -> jax.Array:
+    return _fun_remove_unit_unary(lax.population_count, x)
 
-# math funcs remove unit (binary)
-def binary_func_placeholder(x, y): pass
+@set_module_as('brainunit.lax')
+def clz(
+    x: Union[jax.typing.ArrayLike, Quantity],
+) -> jax.Array:
+    return _fun_remove_unit_unary(lax.clz, x)
 
-# logic funcs (unary)
-def unary_logic_func_placeholder(x): pass
 
 # logic funcs (binary)
-def eq(x, y): pass
-def ne(x, y): pass
-def ge(x, y): pass
-def gt(x, y): pass
-def le(x, y): pass
-def lt(x, y): pass
+@set_module_as('brainunit.lax')
+def eq(
+    x: Union[Quantity, jax.typing.ArrayLike],
+    y: Union[Quantity, jax.typing.ArrayLike],
+) -> Union[bool, jax.Array]:
+    return _fun_logic_binary(lax.eq, x, y)
+
+
+@set_module_as('brainunit.lax')
+def ne(
+    x: Union[Quantity, jax.typing.ArrayLike],
+    y: Union[Quantity, jax.typing.ArrayLike],
+) -> Union[bool, jax.Array]:
+    return _fun_logic_binary(lax.ne, x, y)
+
+@set_module_as('brainunit.lax')
+def ge(
+    x: Union[Quantity, jax.typing.ArrayLike],
+    y: Union[Quantity, jax.typing.ArrayLike],
+) -> Union[bool, jax.Array]:
+    return _fun_logic_binary(lax.ge, x, y)
+
+@set_module_as('brainunit.lax')
+def gt(
+    x: Union[Quantity, jax.typing.ArrayLike],
+    y: Union[Quantity, jax.typing.ArrayLike],
+) -> Union[bool, jax.Array]:
+    return _fun_logic_binary(lax.gt, x, y)
+
+@set_module_as('brainunit.lax')
+def le(
+    x: Union[Quantity, jax.typing.ArrayLike],
+    y: Union[Quantity, jax.typing.ArrayLike],
+) -> Union[bool, jax.Array]:
+    return _fun_logic_binary(lax.le, x, y)
+
+@set_module_as('brainunit.lax')
+def lt(
+    x: Union[Quantity, jax.typing.ArrayLike],
+    y: Union[Quantity, jax.typing.ArrayLike],
+) -> Union[bool, jax.Array]:
+    return _fun_logic_binary(lax.lt, x, y)
 
 # indexing
-def argmax(x): pass
-def argmin(x): pass
+def argmax(
+    operand: Union[Quantity, jax.typing.ArrayLike],
+    axis: int,
+    index_dtype: jax.typing.DTypeLike
+):
+    return _fun_logic_unary(lax.argmax, operand, axis, index_dtype)
+
+
+def argmin(
+    operand: Union[Quantity, jax.typing.ArrayLike],
+    axis: int,
+    index_dtype: jax.typing.DTypeLike
+):
+    return _fun_logic_unary(lax.argmin, operand, axis, index_dtype)
 
 # broadcasting
-def broadcast_shapes(*shapes): pass
+def broadcast_shapes(
+    *shapes
+):
+    return lax.broadcast_shapes(*shapes)
