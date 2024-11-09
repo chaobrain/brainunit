@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
+from __future__ import annotations
+
 import builtins
 from typing import Union, Sequence, Callable
 
@@ -405,6 +407,7 @@ def complex(
 ) -> Union[Quantity, jax.Array]:
     return _fun_keep_unit_binary(lax.complex, x, y)
 
+
 @set_module_as('brainunit.math')
 def pad(
         operand: Union[Quantity, jax.typing.ArrayLike],
@@ -413,12 +416,14 @@ def pad(
 ) -> Union[Quantity, jax.Array]:
     return _fun_keep_unit_binary(lax.pad, operand, padding_value, padding_config)
 
+
 @set_module_as('brainunit.math')
 def sub(
         x: Union[Quantity, jax.typing.ArrayLike],
         y: Union[Quantity, jax.typing.ArrayLike],
 ) -> Union[Quantity, jax.Array]:
     return _fun_keep_unit_binary(lax.sub, x, y)
+
 
 # type conversion
 @set_module_as('brainunit.math')
@@ -427,6 +432,7 @@ def convert_element_type(
         new_dtype: jax.typing.DTypeLike
 ) -> Union[Quantity, jax.Array]:
     return _fun_keep_unit_unary(lax.convert_element_type, operand, new_dtype)
+
 
 @set_module_as('brainunit.math')
 def bitcast_convert_type(
@@ -486,6 +492,7 @@ def approx_min_k(
         return maybe_decimal(Quantity(r[0], unit=operand.unit)), r[1]
     return lax.approx_min_k(operand, k, reduction_dimension, recall_target, reduction_input_size_override,
                             aggregate_to_topk)
+
 
 @set_module_as('brainunit.math')
 def top_k(

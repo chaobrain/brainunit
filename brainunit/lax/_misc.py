@@ -12,6 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
+from __future__ import annotations
+
+from typing import Any, Callable, Sequence, Union
+
+import jax
+from jax import lax
+
+from .. import maybe_decimal
+from .._base import Quantity
+from .._misc import set_module_as
 
 __all__ = [
     'after_all', 'reduce', 'reduce_precision',
@@ -30,17 +40,40 @@ __all__ = [
     'with_sharding_constraint',
 ]
 
-def after_all(x): pass
-def reduce(x): pass
-def reduce_precision(x): pass
-def broadcast_shapes(*shapes): pass
-def is_finite(x): pass
-def conv_dimension_numbers(x): pass
-def conv_general_dilated(x): pass
-def conv_general_dilated_local(x): pass
-def conv_general_dilated_patches(x): pass
-def conv_with_general_padding(x): pass
-def stop_gradient(x): pass
-def custom_linear_solve(x): pass
-def custom_root(x): pass
-def with_sharding_constraint(x): pass
+
+@set_module_as('brainunit.lax')
+def after_all(*operands):
+    new_operands = []
+    for operand in operands:
+        if isinstance(operand, Quantity):
+            new_operands.append(operand.mantissa)
+        else:
+            new_operands.append(operand)
+    return lax.after_all(*new_operands)
+
+
+@set_module_as('brainunit.lax')
+def reduce(
+        operands: Any,
+        init_values: Any,
+        computation: Callable[[Any, Any], Any],
+        dimensions: Sequence[int]
+) -> Any:
+    return lax.reduce(operands, init_values, computation, dimensions)
+
+
+def reduce_precision(
+        operand: Union[jax.typing.ArrayLike, Quantity, float],
+        exponent_bits: int,
+        mantissa_bits: int
+) -> jax.typing.ArrayLike:
+    if isinstance(operand, Quantity):
+        return maybe_decimal(lax.reduce_precision(operand.mantissa, exponent_bits, mantissa_bits))
+    return lax.reduce_precision(operand, exponent_bits, mantissa_bits)
+
+
+@set_module_as('brainunit.lax')
+def broadcast_shapes(
+        *shapes
+):
+    return lax.broadcast_shapes(*shapes)
