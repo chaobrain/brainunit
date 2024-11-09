@@ -20,8 +20,7 @@ import numpy as np
 from jax import lax
 from jax._src.typing import Shape
 
-from .. import maybe_decimal
-from .._base import Quantity
+from .._base import Quantity, maybe_decimal
 from .._misc import set_module_as
 from ..math._fun_keep_unit import _fun_keep_unit_unary, _fun_keep_unit_binary
 
