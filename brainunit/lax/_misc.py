@@ -33,6 +33,9 @@ __all__ = [
 
 @set_module_as('brainunit.lax')
 def after_all(*operands):
+    """Merges one or more XLA token values. Experimental.
+
+    Wraps the XLA AfterAll operator."""
     new_operands = []
     for operand in operands:
         if isinstance(operand, Quantity):
@@ -49,6 +52,17 @@ def reduce(
         computation: Callable[[Any, Any], Any],
         dimensions: Sequence[int]
 ) -> Any:
+    """Wraps XLA's `Reduce
+    <https://www.tensorflow.org/xla/operation_semantics#reduce>`_
+    operator.
+
+    ``init_values`` and ``computation`` together must form a `monoid
+    <https://en.wikipedia.org/wiki/Monoid>`_
+    for correctness. That is ``init_values`` must be an identity of
+    ``computation``, and ``computation`` must be associative. XLA may exploit both
+    of these properties during code generation; if either is violated the result
+    is undefined.
+    """
     return lax.reduce(operands, init_values, computation, dimensions)
 
 
@@ -57,6 +71,10 @@ def reduce_precision(
         exponent_bits: int,
         mantissa_bits: int
 ) -> jax.typing.ArrayLike:
+    """Wraps XLA's `ReducePrecision
+    <https://www.tensorflow.org/xla/operation_semantics#reduceprecision>`_
+    operator.
+    """
     if isinstance(operand, Quantity):
         return maybe_decimal(lax.reduce_precision(operand.mantissa, exponent_bits, mantissa_bits))
     return lax.reduce_precision(operand, exponent_bits, mantissa_bits)
@@ -66,4 +84,5 @@ def reduce_precision(
 def broadcast_shapes(
         *shapes
 ):
+    """Returns the shape that results from NumPy broadcasting of `shapes`."""
     return lax.broadcast_shapes(*shapes)

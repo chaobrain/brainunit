@@ -43,6 +43,7 @@ __all__ = [
 def population_count(
         x: Union[jax.typing.ArrayLike, Quantity],
 ) -> jax.Array:
+    r"""Elementwise popcount, count the number of set bits in each element."""
     return _fun_remove_unit_unary(lax.population_count, x)
 
 
@@ -50,6 +51,7 @@ def population_count(
 def clz(
         x: Union[jax.typing.ArrayLike, Quantity],
 ) -> jax.Array:
+    r"""Elementwise count-leading-zeros."""
     return _fun_remove_unit_unary(lax.clz, x)
 
 
@@ -59,6 +61,7 @@ def eq(
         x: Union[Quantity, jax.typing.ArrayLike],
         y: Union[Quantity, jax.typing.ArrayLike],
 ) -> Union[bool, jax.Array]:
+    r"""Elementwise equals: :math:`x = y`."""
     return _fun_logic_binary(lax.eq, x, y)
 
 
@@ -67,6 +70,7 @@ def ne(
         x: Union[Quantity, jax.typing.ArrayLike],
         y: Union[Quantity, jax.typing.ArrayLike],
 ) -> Union[bool, jax.Array]:
+    r"""Elementwise not-equals: :math:`x \neq y`."""
     return _fun_logic_binary(lax.ne, x, y)
 
 
@@ -75,6 +79,7 @@ def ge(
         x: Union[Quantity, jax.typing.ArrayLike],
         y: Union[Quantity, jax.typing.ArrayLike],
 ) -> Union[bool, jax.Array]:
+    r"""Elementwise greater-than-or-equals: :math:`x \geq y`."""
     return _fun_logic_binary(lax.ge, x, y)
 
 
@@ -83,6 +88,7 @@ def gt(
         x: Union[Quantity, jax.typing.ArrayLike],
         y: Union[Quantity, jax.typing.ArrayLike],
 ) -> Union[bool, jax.Array]:
+    r"""Elementwise greater-than: :math:`x > y`."""
     return _fun_logic_binary(lax.gt, x, y)
 
 
@@ -91,6 +97,7 @@ def le(
         x: Union[Quantity, jax.typing.ArrayLike],
         y: Union[Quantity, jax.typing.ArrayLike],
 ) -> Union[bool, jax.Array]:
+    r"""Elementwise less-than-or-equals: :math:`x \leq y`."""
     return _fun_logic_binary(lax.le, x, y)
 
 
@@ -99,6 +106,7 @@ def lt(
         x: Union[Quantity, jax.typing.ArrayLike],
         y: Union[Quantity, jax.typing.ArrayLike],
 ) -> Union[bool, jax.Array]:
+    r"""Elementwise less-than: :math:`x < y`."""
     return _fun_logic_binary(lax.lt, x, y)
 
 
@@ -108,7 +116,8 @@ def argmax(
         operand: Union[Quantity, jax.typing.ArrayLike],
         axis: int,
         index_dtype: jax.typing.DTypeLike
-):
+) -> jax.Array:
+    """Computes the index of the maximum element along ``axis``."""
     return _fun_logic_unary(lax.argmax, operand, axis, index_dtype)
 
 @set_module_as('brainunit.lax')
@@ -116,5 +125,6 @@ def argmin(
         operand: Union[Quantity, jax.typing.ArrayLike],
         axis: int,
         index_dtype: jax.typing.DTypeLike
-):
+) -> jax.Array:
+    """Computes the index of the minimum element along ``axis``."""
     return _fun_logic_unary(lax.argmin, operand, axis, index_dtype)
