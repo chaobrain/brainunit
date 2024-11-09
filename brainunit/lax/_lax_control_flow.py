@@ -18,6 +18,7 @@ __all__ = [
   'select_n', 'switch', 'while_loop',
 ]
 
+# TODO: Overload lax controll functions
 def associative_scan(x): pass
 def cond(pred, true_fn, false_fn): pass
 def fori_loop(lower, upper, body_fn, init_val): pass

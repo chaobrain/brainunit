@@ -19,6 +19,7 @@ __all__ = [
   'pswapaxes', 'axis_index',
 ]
 
+# TODO: Overload lax parallel functions
 def all_gather(x): pass
 def all_to_all(x): pass
 def psum(x): pass
