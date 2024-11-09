@@ -30,7 +30,7 @@ __all__ = [
     'zeros_like_array',
 
     # array creation(misc)
-    'iota', 'broadcasted_iota', 'zeros_like_shaped_array',
+    'iota', 'broadcasted_iota',
 
     # indexing funcs
 
@@ -65,6 +65,7 @@ def iota(
         size: int,
         unit: Optional[Unit] = None,
 ) -> Union[Quantity, jax.Array]:
+    """Wraps XLA's `Iota  operator."""
     if unit is not None:
         assert isinstance(unit, Unit), 'unit must be an instance of Unit.'
         return lax.iota(dtype, size) * unit
@@ -80,19 +81,10 @@ def broadcasted_iota(
         _sharding=None,
         unit: Optional[Unit] = None,
 ) -> Union[Quantity, jax.Array]:
+    """Convenience wrapper around ``iota``."""
     if unit is not None:
         assert isinstance(unit, Unit), 'unit must be an instance of Unit.'
         return lax.broadcasted_iota(dtype, shape, dimension, _sharding) * unit
     else:
         return lax.broadcasted_iota(dtype, shape, dimension, _sharding)
 
-
-def zeros_like_shaped_array(
-        aval: jax.core.ShapedArray,
-        unit: Optional[Unit] = None,
-):
-    if unit is not None:
-        assert isinstance(unit, Unit), 'unit must be an instance of Unit.'
-        return lax.zeros_like_shaped_array(aval) * unit
-    else:
-        return lax.zeros_like_shaped_array(aval)

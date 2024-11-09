@@ -19,8 +19,7 @@ from typing import Any, Callable, Sequence, Union
 import jax
 from jax import lax
 
-from .. import maybe_decimal
-from .._base import Quantity
+from .._base import Quantity, maybe_decimal
 from .._misc import set_module_as
 
 __all__ = [
@@ -29,15 +28,6 @@ __all__ = [
     # getting attribute funcs
     'broadcast_shapes',
 
-    # convolution
-    'conv_dimension_numbers', 'conv_general_dilated', 'conv_general_dilated_local', 'conv_general_dilated_patches',
-    'conv_with_general_padding',
-
-    # custom gradient operators
-    'stop_gradient', 'custom_linear_solve', 'custom_root',
-
-    # sharding-related operators
-    'with_sharding_constraint',
 ]
 
 
