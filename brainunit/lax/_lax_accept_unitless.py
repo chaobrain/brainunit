@@ -35,8 +35,7 @@ __all__ = [
     'zeta',
 
     # math funcs only accept unitless (n-ary)
-    'betainc', 'betainc_gradx', 'igamma_gradx',
-    'igamma_grada', 'igammac_gradx', 'igammac_grada', 'polygamma_gradx',
+    'betainc',
 
     # Elementwise bit operations (unary)
 
@@ -56,6 +55,7 @@ def acos(
         x: Union[Quantity, jax.typing.ArrayLike],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise arc cosine: :math:`\mathrm{acos}(x)`."""
     return _fun_accept_unitless_unary(lax.acos, x, unit_to_scale=unit_to_scale)
 
 
@@ -64,6 +64,7 @@ def acosh(
         x: Union[Quantity, jax.typing.ArrayLike],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise inverse hyperbolic cosine: :math:`\mathrm{acosh}(x)`."""
     return _fun_accept_unitless_unary(lax.acosh, x, unit_to_scale=unit_to_scale)
 
 
@@ -72,6 +73,7 @@ def asin(
         x: Union[Quantity, jax.typing.ArrayLike],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise arc sine: :math:`\mathrm{asin}(x)`."""
     return _fun_accept_unitless_unary(lax.asin, x, unit_to_scale=unit_to_scale)
 
 
@@ -80,6 +82,7 @@ def asinh(
         x: Union[Quantity, jax.typing.ArrayLike],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise inverse hyperbolic sine: :math:`\mathrm{asinh}(x)`."""
     return _fun_accept_unitless_unary(lax.asinh, x, unit_to_scale=unit_to_scale)
 
 
@@ -88,6 +91,7 @@ def atan(
         x: Union[Quantity, jax.typing.ArrayLike],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise arc tangent: :math:`\mathrm{atan}(x)`."""
     return _fun_accept_unitless_unary(lax.atan, x, unit_to_scale=unit_to_scale)
 
 
@@ -96,6 +100,7 @@ def atanh(
         x: Union[Quantity, jax.typing.ArrayLike],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise inverse hyperbolic tangent: :math:`\mathrm{atanh}(x)`."""
     return _fun_accept_unitless_unary(lax.atanh, x, unit_to_scale=unit_to_scale)
 
 
@@ -106,6 +111,25 @@ def collapse(
         end_dimension: Optional[int] = None,
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    """Collapses dimensions of an array into a single dimension.
+
+    For example, if ``operand`` is an array with shape ``[2, 3, 4]``,
+    ``collapse(operand, 0, 2).shape == [6, 4]``. The elements of the collapsed
+    dimension are laid out major-to-minor, i.e., with the lowest-numbered
+    dimension as the slowest varying dimension.
+
+    Args:
+        operand: an input array.
+        start_dimension: the start of the dimensions to collapse (inclusive).
+        stop_dimension: the end of the dimensions to collapse (exclusive). Pass None
+          to collapse all the dimensions after start.
+        unit_to_scale: the unit to scale the input to. If None, the input should be
+            dimensionless.
+
+    Returns:
+        An array where dimensions ``[start_dimension, stop_dimension)`` have been
+        collapsed (raveled) into a single dimension.
+    """
     return _fun_accept_unitless_unary(lax.collapse, x, start_dimension, end_dimension,
                                       unit_to_scale=unit_to_scale)
 
@@ -117,6 +141,7 @@ def cumlogsumexp(
         reverse: Optional[bool] = False,
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    """Computes a cumulative logsumexp along `axis`."""
     return _fun_accept_unitless_unary(lax.cumlogsumexp, x, axis, reverse,
                                       unit_to_scale=unit_to_scale)
 
@@ -126,6 +151,9 @@ def bessel_i0e(
         x: Union[Quantity, jax.typing.ArrayLike],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Exponentially scaled modified Bessel function of order 0:
+    :math:`\mathrm{i0e}(x) = e^{-|x|} \mathrm{i0}(x)`
+    """
     return _fun_accept_unitless_unary(lax.bessel_i0e, x, unit_to_scale=unit_to_scale)
 
 
@@ -134,6 +162,9 @@ def bessel_i1e(
         x: Union[Quantity, jax.typing.ArrayLike],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Exponentially scaled modified Bessel function of order 1:
+    :math:`\mathrm{i1e}(x) = e^{-|x|} \mathrm{i1}(x)`
+    """
     return _fun_accept_unitless_unary(lax.bessel_i1e, x, unit_to_scale=unit_to_scale)
 
 
@@ -142,6 +173,7 @@ def digamma(
         x: Union[Quantity, jax.typing.ArrayLike],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise digamma: :math:`\psi(x)`."""
     return _fun_accept_unitless_unary(lax.digamma, x, unit_to_scale=unit_to_scale)
 
 
@@ -150,6 +182,7 @@ def lgamma(
         x: Union[Quantity, jax.typing.ArrayLike],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise log gamma: :math:`\mathrm{log}(\Gamma(x))`."""
     return _fun_accept_unitless_unary(lax.lgamma, x, unit_to_scale=unit_to_scale)
 
 
@@ -158,6 +191,7 @@ def erf(
         x: Union[Quantity, jax.typing.ArrayLike],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise error function: :math:`\mathrm{erf}(x)`."""
     return _fun_accept_unitless_unary(lax.erf, x, unit_to_scale=unit_to_scale)
 
 
@@ -166,6 +200,8 @@ def erfc(
         x: Union[Quantity, jax.typing.ArrayLike],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise complementary error function:
+    :math:`\mathrm{erfc}(x) = 1 - \mathrm{erf}(x)`."""
     return _fun_accept_unitless_unary(lax.erfc, x, unit_to_scale=unit_to_scale)
 
 
@@ -174,6 +210,7 @@ def erf_inv(
         x: Union[Quantity, jax.typing.ArrayLike],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise inverse error function: :math:`\mathrm{erf}^{-1}(x)`."""
     return _fun_accept_unitless_unary(lax.erf_inv, x, unit_to_scale=unit_to_scale)
 
 
@@ -182,6 +219,7 @@ def logistic(
         x: Union[Quantity, jax.typing.ArrayLike],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise logistic (sigmoid) function: :math:`\frac{1}{1 + e^{-x}}`."""
     return _fun_accept_unitless_unary(lax.logistic, x, unit_to_scale=unit_to_scale)
 
 
@@ -193,6 +231,8 @@ def atan2(
         y: Union[jax.typing.ArrayLike, Quantity],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise arc tangent of two variables:
+        :math:`\mathrm{atan}({x \over y})`."""
     return _fun_accept_unitless_binary(lax.atan2, x, y, unit_to_scale=unit_to_scale)
 
 
@@ -202,6 +242,7 @@ def polygamma(
         y: Union[jax.typing.ArrayLike, Quantity],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise polygamma: :math:`\psi^{(m)}(x)`."""
     return _fun_accept_unitless_binary(lax.polygamma, x, y, unit_to_scale=unit_to_scale)
 
 
@@ -211,6 +252,7 @@ def igamma(
         y: Union[jax.typing.ArrayLike, Quantity],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise regularized incomplete gamma function."""
     return _fun_accept_unitless_binary(lax.igamma, x, y, unit_to_scale=unit_to_scale)
 
 
@@ -220,6 +262,7 @@ def igammac(
         y: Union[jax.typing.ArrayLike, Quantity],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise complementary regularized incomplete gamma function."""
     return _fun_accept_unitless_binary(lax.igammac, x, y, unit_to_scale=unit_to_scale)
 
 
@@ -229,6 +272,7 @@ def igamma_grad_a(
         y: Union[jax.typing.ArrayLike, Quantity],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise derivative of the regularized incomplete gamma function."""
     return _fun_accept_unitless_binary(lax.igamma_grad_a, x, y, unit_to_scale=unit_to_scale)
 
 
@@ -238,6 +282,7 @@ def random_gamma_grad(
         y: Union[jax.typing.ArrayLike, Quantity],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise derivative of samples from `Gamma(a, 1)`."""
     return _fun_accept_unitless_binary(lax.random_gamma_grad, x, y, unit_to_scale=unit_to_scale)
 
 
@@ -247,6 +292,7 @@ def zeta(
         q: Union[jax.typing.ArrayLike, Quantity],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise Hurwitz zeta function: :math:`\zeta(x, q)`"""
     return _fun_accept_unitless_binary(lax.zeta, x, q, unit_to_scale=unit_to_scale)
 
 
@@ -284,74 +330,8 @@ def betainc(
         x: Union[jax.typing.ArrayLike, Quantity],
         unit_to_scale: Optional[Unit] = None,
 ) -> jax.Array:
+    r"""Elementwise regularized incomplete beta integral."""
     return _fun_accept_unitless_nary(lax.betainc, a, b, x,
-                                     quantity_num=3, unit_to_scale=unit_to_scale)
-
-
-@set_module_as('brainunit.lax')
-def betainc_gradx(
-        g: Union[jax.typing.ArrayLike, Quantity],
-        a: Union[jax.typing.ArrayLike, Quantity],
-        b: Union[jax.typing.ArrayLike, Quantity],
-        x: Union[jax.typing.ArrayLike, Quantity],
-        unit_to_scale: Optional[Unit] = None,
-) -> jax.Array:
-    return _fun_accept_unitless_nary(lax.betainc_gradx, g, a, b, x,
-                                     quantity_num=4, unit_to_scale=unit_to_scale)
-
-
-@set_module_as('brainunit.lax')
-def igamma_gradx(
-        g: Union[jax.typing.ArrayLike, Quantity],
-        a: Union[jax.typing.ArrayLike, Quantity],
-        x: Union[jax.typing.ArrayLike, Quantity],
-        unit_to_scale: Optional[Unit] = None,
-) -> jax.Array:
-    return _fun_accept_unitless_nary(lax.igamma_gradx, g, a, x,
-                                     quantity_num=3, unit_to_scale=unit_to_scale)
-
-
-@set_module_as('brainunit.lax')
-def igamma_grada(
-        g: Union[jax.typing.ArrayLike, Quantity],
-        a: Union[jax.typing.ArrayLike, Quantity],
-        x: Union[jax.typing.ArrayLike, Quantity],
-        unit_to_scale: Optional[Unit] = None,
-) -> jax.Array:
-    return _fun_accept_unitless_nary(lax.igamma_grada, g, a, x,
-                                     quantity_num=3, unit_to_scale=unit_to_scale)
-
-
-@set_module_as('brainunit.lax')
-def igammac_gradx(
-        g: Union[jax.typing.ArrayLike, Quantity],
-        a: Union[jax.typing.ArrayLike, Quantity],
-        x: Union[jax.typing.ArrayLike, Quantity],
-        unit_to_scale: Optional[Unit] = None,
-) -> jax.Array:
-    return _fun_accept_unitless_nary(lax.igammac_gradx, g, a, x,
-                                     quantity_num=3, unit_to_scale=unit_to_scale)
-
-
-@set_module_as('brainunit.lax')
-def igammac_grada(
-        g: Union[jax.typing.ArrayLike, Quantity],
-        a: Union[jax.typing.ArrayLike, Quantity],
-        x: Union[jax.typing.ArrayLike, Quantity],
-        unit_to_scale: Optional[Unit] = None,
-) -> jax.Array:
-    return _fun_accept_unitless_nary(lax.igammac_grada, g, a, x,
-                                     quantity_num=3, unit_to_scale=unit_to_scale)
-
-
-@set_module_as('brainunit.lax')
-def polygamma_gradx(
-        g: Union[jax.typing.ArrayLike, Quantity],
-        m: Union[jax.typing.ArrayLike, Quantity],
-        x: Union[jax.typing.ArrayLike, Quantity],
-        unit_to_scale: Optional[Unit] = None,
-) -> jax.Array:
-    return _fun_accept_unitless_nary(lax.polygamma_gradx, g, m, x,
                                      quantity_num=3, unit_to_scale=unit_to_scale)
 
 
@@ -361,6 +341,7 @@ def shift_left(
         x: Union[Quantity, jax.typing.ArrayLike],
         y: Union[Quantity, jax.typing.ArrayLike]
 ) -> jax.Array:
+    r"""Elementwise left shift: :math:`x \ll y`."""
     return _fun_unitless_binary(lax.shift_left, x, y)
 
 
@@ -369,6 +350,7 @@ def shift_right_arithmetic(
         x: Union[Quantity, jax.typing.ArrayLike],
         y: Union[Quantity, jax.typing.ArrayLike]
 ) -> jax.Array:
+    r"""Elementwise arithmetic right shift: :math:`x \gg y`."""
     return _fun_unitless_binary(lax.shift_right_arithmetic, x, y)
 
 
@@ -377,6 +359,7 @@ def shift_right_logical(
         x: Union[Quantity, jax.typing.ArrayLike],
         y: Union[Quantity, jax.typing.ArrayLike]
 ) -> jax.Array:
+    r"""Elementwise logical right shift: :math:`x \gg y`."""
     return _fun_unitless_binary(lax.shift_right_logical, x, y)
 
 
