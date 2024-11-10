@@ -20,7 +20,7 @@ from jax import nn
 from ._fun_accept_unitless import _fun_accept_unitless_unary
 from ._fun_array_creation import asarray
 from ._fun_keep_unit import _fun_keep_unit_unary, where
-from .._base import Quantity, get_mantissa, get_unit
+from .._base import Quantity, get_mantissa
 from .._misc import set_module_as
 
 __all__ = [
@@ -337,7 +337,7 @@ hard_swish = hard_silu
 
 def hard_tanh(
     x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+) -> jax.Array:
     r"""Hard :math:`\mathrm{tanh}` activation function.
 
     Computes the element-wise function:
@@ -355,16 +355,12 @@ def hard_tanh(
     Returns:
         An array.
     """
-    x_arr = asarray(x)
-    unit = get_unit(x)
-    return where(
-        get_mantissa(x_arr) > 1, 1 * unit,
-        where(get_mantissa(x_arr) < -1, -1 * unit, x_arr)
-    )
+    return _fun_accept_unitless_unary(nn.hard_tanh, x)
 
 
 def elu(
     x: Union[Quantity, jax.typing.ArrayLike],
+    alpha: jax.typing.ArrayLike = 1.0
 ) -> jax.Array:
     r"""Exponential linear unit activation function.
 
@@ -383,11 +379,12 @@ def elu(
     Returns:
         An array.
     """
-    return _fun_accept_unitless_unary(nn.elu, x)
+    return _fun_accept_unitless_unary(nn.elu, x, alpha=alpha)
 
 
 def celu(
     x: Union[Quantity, jax.typing.ArrayLike],
+    alpha: jax.typing.ArrayLike = 1.0
 ) -> jax.Array:
     r"""Continuously-differentiable exponential linear unit activation.
 
@@ -410,7 +407,7 @@ def celu(
     Returns:
         An array.
     """
-    return _fun_accept_unitless_unary(nn.celu, x)
+    return _fun_accept_unitless_unary(nn.celu, x, alpha=alpha)
 
 
 def selu(
@@ -444,6 +441,7 @@ def selu(
 
 def gelu(
     x: Union[Quantity, jax.typing.ArrayLike],
+    approximate: bool = True
 ) -> jax.Array:
     r"""Gaussian error linear unit activation function.
 
@@ -466,7 +464,7 @@ def gelu(
         x: input array
         approximate: whether to use the approximate or exact formulation.
     """
-    return _fun_accept_unitless_unary(nn.gelu, x)
+    return _fun_accept_unitless_unary(nn.gelu, x, approximate=approximate)
 
 
 def glu(
