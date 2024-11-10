@@ -34,7 +34,7 @@ __all__ = [
 
 
 def unit_change(
-        unit_change_fun: Callable
+    unit_change_fun: Callable
 ):
     def actual_decorator(func):
         func._unit_change_fun = unit_change_fun
@@ -46,7 +46,7 @@ def unit_change(
 # math funcs change unit (unary)
 @unit_change(lambda u: u ** -0.5)
 def rsqrt(
-        x: Union[jax.typing.ArrayLike, Quantity],
+    x: Union[jax.typing.ArrayLike, Quantity],
 ) -> Union[Quantity, jax.Array]:
     r"""Elementwise reciprocal square root:  :math:`1 \over \sqrt{x}`."""
     return _fun_change_unit_unary(lax.rsqrt,
@@ -57,12 +57,12 @@ def rsqrt(
 # math funcs change unit (binary)
 @unit_change(lambda x, y: x * y)
 def conv(
-        x: Union[jax.typing.ArrayLike, Quantity],
-        y: Union[jax.typing.ArrayLike, Quantity],
-        window_strides: Sequence[int],
-        padding: str,
-        precision: lax.PrecisionLike = None,
-        preferred_element_type: jax.typing.DTypeLike | None = None
+    x: Union[jax.typing.ArrayLike, Quantity],
+    y: Union[jax.typing.ArrayLike, Quantity],
+    window_strides: Sequence[int],
+    padding: str,
+    precision: lax.PrecisionLike = None,
+    preferred_element_type: jax.typing.DTypeLike | None = None
 ) -> Union[Quantity, jax.Array]:
     """Convenience wrapper around `conv_general_dilated`.
 
@@ -91,15 +91,15 @@ def conv(
 
 @unit_change(lambda x, y: x * y)
 def conv_transpose(
-        x: Union[jax.typing.ArrayLike, Quantity],
-        y: Union[jax.typing.ArrayLike, Quantity],
-        strides: Sequence[int],
-        padding: str | Sequence[tuple[int, int]],
-        rhs_dilation: Sequence[int] | None = None,
-        dimension_numbers: jax.lax.ConvGeneralDilatedDimensionNumbers = None,
-        transpose_kernel: bool = False,
-        precision: lax.PrecisionLike = None,
-        preferred_element_type: jax.typing.DTypeLike | None = None
+    x: Union[jax.typing.ArrayLike, Quantity],
+    y: Union[jax.typing.ArrayLike, Quantity],
+    strides: Sequence[int],
+    padding: str | Sequence[tuple[int, int]],
+    rhs_dilation: Sequence[int] | None = None,
+    dimension_numbers: jax.lax.ConvGeneralDilatedDimensionNumbers = None,
+    transpose_kernel: bool = False,
+    precision: lax.PrecisionLike = None,
+    preferred_element_type: jax.typing.DTypeLike | None = None
 ) -> Union[Quantity, jax.Array]:
     """Convenience wrapper for calculating the N-d convolution "transpose".
 
@@ -144,8 +144,8 @@ def conv_transpose(
 
 @unit_change(lambda x, y: x / y)
 def div(
-        x: Union[jax.typing.ArrayLike, Quantity],
-        y: Union[jax.typing.ArrayLike, Quantity],
+    x: Union[jax.typing.ArrayLike, Quantity],
+    y: Union[jax.typing.ArrayLike, Quantity],
 ) -> Union[Quantity, jax.Array]:
     r"""Elementwise division: :math:`x \over y`.
 
@@ -160,12 +160,12 @@ def div(
 
 @unit_change(lambda x, y: x * y)
 def dot_general(
-        x: Union[jax.typing.ArrayLike, Quantity],
-        y: Union[jax.typing.ArrayLike, Quantity],
-        dimension_numbers: jax.lax.DotDimensionNumbers,
-        precision: jax.lax.PrecisionLike = None,
-        preferred_element_type: jax.typing.DTypeLike | None = None,
-        out_type=None
+    x: Union[jax.typing.ArrayLike, Quantity],
+    y: Union[jax.typing.ArrayLike, Quantity],
+    dimension_numbers: jax.lax.DotDimensionNumbers,
+    precision: jax.lax.PrecisionLike = None,
+    preferred_element_type: jax.typing.DTypeLike | None = None,
+    out_type=None
 ) -> Union[Quantity, jax.Array]:
     """General dot product/contraction operator.
 
@@ -220,8 +220,8 @@ def dot_general(
 
 @set_module_as('brainunit.lax')
 def pow(
-        x: Union[Quantity, jax.typing.ArrayLike],
-        y: Union[Quantity, jax.typing.ArrayLike],
+    x: Union[Quantity, jax.typing.ArrayLike],
+    y: Union[Quantity, jax.typing.ArrayLike],
 ) -> Union[Quantity, jax.Array]:
     r"""Elementwise power: :math:`x^y`."""
     if isinstance(x, Quantity):
@@ -239,8 +239,8 @@ def pow(
 
 @set_module_as('brainunit.lax')
 def integer_pow(
-        x: Union[Quantity, jax.typing.ArrayLike],
-        y: Union[Quantity, jax.typing.ArrayLike],
+    x: Union[Quantity, jax.typing.ArrayLike],
+    y: Union[Quantity, jax.typing.ArrayLike],
 ) -> Union[Quantity, jax.Array]:
     r"""Elementwise power: :math:`x^y`, where :math:`y` is a fixed integer."""
     if isinstance(x, Quantity):
@@ -258,8 +258,8 @@ def integer_pow(
 
 @unit_change(lambda x, y: x * y)
 def mul(
-        x: Union[Quantity, jax.typing.ArrayLike],
-        y: Union[Quantity, jax.typing.ArrayLike]
+    x: Union[Quantity, jax.typing.ArrayLike],
+    y: Union[Quantity, jax.typing.ArrayLike]
 ) -> Union[Quantity, jax.typing.ArrayLike]:
     r"""Elementwise multiplication: :math:`x \times y`."""
     return _fun_change_unit_binary(lax.mul,
@@ -269,8 +269,8 @@ def mul(
 
 @set_module_as('brainunit.lax')
 def rem(
-        x: Union[Quantity, jax.typing.ArrayLike],
-        y: Union[Quantity, jax.typing.ArrayLike]
+    x: Union[Quantity, jax.typing.ArrayLike],
+    y: Union[Quantity, jax.typing.ArrayLike]
 ) -> Union[Quantity, jax.typing.ArrayLike]:
     r"""Elementwise remainder: :math:`x \bmod y`.
 
@@ -292,13 +292,11 @@ def rem(
 
 @unit_change(lambda x, y: x * y)
 def batch_matmul(
-        x: Union[Quantity, jax.typing.ArrayLike],
-        y: Union[Quantity, jax.typing.ArrayLike],
-        precision: jax.lax.PrecisionLike = None
+    x: Union[Quantity, jax.typing.ArrayLike],
+    y: Union[Quantity, jax.typing.ArrayLike],
+    precision: jax.lax.PrecisionLike = None
 ) -> Union[Quantity, jax.typing.ArrayLike]:
     """Batch matrix multiplication."""
     return _fun_change_unit_binary(lax.batch_matmul,
                                    lambda x, y: x * y,
                                    x, y, precision)
-
-

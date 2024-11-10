@@ -19,14 +19,10 @@ from ._lax_array_creation import *
 from ._lax_array_creation import __all__ as _lax_array_creation_all
 from ._lax_change_unit import *
 from ._lax_change_unit import __all__ as _lax_change_unit_all
-from ._lax_control_flow import *
-from ._lax_control_flow import __all__ as _lax_control_flow_all
 from ._lax_keep_unit import *
 from ._lax_keep_unit import __all__ as _lax_keep_unit_all
 from ._lax_linalg import *
 from ._lax_linalg import __all__ as _lax_linalg_all
-from ._lax_parallel import *
-from ._lax_parallel import __all__ as _lax_parallel_all
 from ._lax_remove_unit import *
 from ._lax_remove_unit import __all__ as _lax_remove_unit_all
 from ._misc import *
@@ -35,19 +31,15 @@ from ._misc import __all__ as _lax_misc_all
 __all__ = (_lax_accept_unitless_all +
            _lax_array_creation_all +
            _lax_change_unit_all +
-           _lax_control_flow_all +
            _lax_keep_unit_all +
            _lax_linalg_all +
-           _lax_parallel_all +
            _lax_remove_unit_all +
            _lax_misc_all)
 
 del (_lax_accept_unitless_all,
      _lax_array_creation_all,
      _lax_change_unit_all,
-     _lax_control_flow_all,
      _lax_keep_unit_all,
      _lax_linalg_all,
-     _lax_parallel_all,
      _lax_remove_unit_all,
      _lax_misc_all)

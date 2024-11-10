@@ -27,7 +27,6 @@ __all__ = [
 
     # getting attribute funcs
     'broadcast_shapes',
-
 ]
 
 
@@ -47,10 +46,10 @@ def after_all(*operands):
 
 @set_module_as('brainunit.lax')
 def reduce(
-        operands: Any,
-        init_values: Any,
-        computation: Callable[[Any, Any], Any],
-        dimensions: Sequence[int]
+    operands: Any,
+    init_values: Any,
+    computation: Callable[[Any, Any], Any],
+    dimensions: Sequence[int]
 ) -> Any:
     """Wraps XLA's `Reduce
     <https://www.tensorflow.org/xla/operation_semantics#reduce>`_
@@ -67,9 +66,9 @@ def reduce(
 
 
 def reduce_precision(
-        operand: Union[jax.typing.ArrayLike, Quantity, float],
-        exponent_bits: int,
-        mantissa_bits: int
+    operand: Union[jax.typing.ArrayLike, Quantity, float],
+    exponent_bits: int,
+    mantissa_bits: int
 ) -> jax.typing.ArrayLike:
     """Wraps XLA's `ReducePrecision
     <https://www.tensorflow.org/xla/operation_semantics#reduceprecision>`_
@@ -82,7 +81,7 @@ def reduce_precision(
 
 @set_module_as('brainunit.lax')
 def broadcast_shapes(
-        *shapes
+    *shapes
 ):
     """Returns the shape that results from NumPy broadcasting of `shapes`."""
     return lax.broadcast_shapes(*shapes)

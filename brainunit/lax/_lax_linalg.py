@@ -21,8 +21,8 @@ __all__ = [
 # linear algebra
 @unit_change(lambda x: x ** 0.5)
 def cholesky(
-        x: Union[Quantity, jax.typing.ArrayLike],
-        symmetrize_input: bool = True,
+    x: Union[Quantity, jax.typing.ArrayLike],
+    symmetrize_input: bool = True,
 ) -> Union[Quantity, jax.typing.ArrayLike]:
     """Cholesky decomposition.
 
@@ -55,9 +55,9 @@ def cholesky(
 
 @set_module_as('brainunit.lax')
 def eig(
-        x: Union[Quantity, jax.typing.ArrayLike],
-        compute_left_eigenvectors: bool = True,
-        compute_right_eigenvectors: bool = True
+    x: Union[Quantity, jax.typing.ArrayLike],
+    compute_left_eigenvectors: bool = True,
+    compute_right_eigenvectors: bool = True
 ) -> tuple[Quantity, jax.Array, jax.Array] | list[jax.Array] | tuple[Quantity, jax.Array] | Quantity:
     """Eigendecomposition of a general matrix.
 
@@ -109,11 +109,11 @@ def eig(
 
 @set_module_as('brainunit.lax')
 def eigh(
-        x: Union[Quantity, jax.typing.ArrayLike],
-        lower: bool = True,
-        symmetrize_input: bool = True,
-        sort_eigenvalues: bool = True,
-        subset_by_index: tuple[int, int] | None = None,
+    x: Union[Quantity, jax.typing.ArrayLike],
+    lower: bool = True,
+    symmetrize_input: bool = True,
+    sort_eigenvalues: bool = True,
+    subset_by_index: tuple[int, int] | None = None,
 ) -> tuple[Quantity | jax.Array, jax.Array]:
     r"""Eigendecomposition of a Hermitian matrix.
 
@@ -160,7 +160,7 @@ def eigh(
 
 @set_module_as('brainunit.lax')
 def hessenberg(
-        x: Union[Quantity, jax.typing.ArrayLike],
+    x: Union[Quantity, jax.typing.ArrayLike],
 ) -> tuple[Quantity | jax.Array, jax.Array]:
     """Reduces a square matrix to upper Hessenberg form.
 
@@ -185,7 +185,7 @@ def hessenberg(
 
 @set_module_as('brainunit.lax')
 def lu(
-        x: Union[Quantity, jax.typing.ArrayLike],
+    x: Union[Quantity, jax.typing.ArrayLike],
 ) -> tuple[Quantity | jax.Array, jax.Array, jax.Array]:
     """LU decomposition with partial pivoting.
 
@@ -225,8 +225,8 @@ def lu(
 
 @set_module_as('brainunit.lax')
 def householder_product(
-        a: Union[Quantity, jax.typing.ArrayLike],
-        taus: Union[Quantity, jax.typing.ArrayLike],
+    a: Union[Quantity, jax.typing.ArrayLike],
+    taus: Union[Quantity, jax.typing.ArrayLike],
 ) -> jax.Array:
     """Product of elementary Householder reflectors.
 
@@ -253,7 +253,7 @@ def householder_product(
 
 @set_module_as('brainunit.lax')
 def qdwh(
-        x: Union[Quantity, jax.typing.ArrayLike],
+    x: Union[Quantity, jax.typing.ArrayLike],
 ) -> tuple[jax.Array, Quantity | jax.Array, int, bool]:
     """QR-based dynamically weighted Halley iteration for polar decomposition.
 
@@ -283,7 +283,7 @@ def qdwh(
 
 @set_module_as('brainunit.lax')
 def qr(
-        x: Union[Quantity, jax.typing.ArrayLike],
+    x: Union[Quantity, jax.typing.ArrayLike],
 ) -> tuple[jax.Array, Quantity | jax.Array]:
     """QR decomposition.
 
@@ -320,10 +320,10 @@ def qr(
 
 @set_module_as('brainunit.lax')
 def schur(
-        x: Union[Quantity, jax.typing.ArrayLike],
-        compute_schur_vectors: bool = True,
-        sort_eig_vals: bool = False,
-        select_callable: Callable[..., Any] | None = None
+    x: Union[Quantity, jax.typing.ArrayLike],
+    compute_schur_vectors: bool = True,
+    sort_eig_vals: bool = False,
+    select_callable: Callable[..., Any] | None = None
 ) -> tuple[jax.Array, Quantity | jax.Array]:
     if isinstance(x, Quantity):
         t, q = lax.linalg.schur(x.mantissa, compute_schur_vectors=compute_schur_vectors,
@@ -336,7 +336,7 @@ def schur(
 
 @set_module_as('brainunit.lax')
 def svd(
-        x: Union[Quantity, jax.typing.ArrayLike],
+    x: Union[Quantity, jax.typing.ArrayLike],
 ) -> tuple[jax.Array, Quantity | jax.Array, jax.Array]:
     """Singular value decomposition.
 
@@ -353,11 +353,11 @@ def svd(
 
 @set_module_as('brainunit.lax')
 def triangular_solve(
-        a: Union[Quantity, jax.typing.ArrayLike],
-        b: Union[Quantity, jax.typing.ArrayLike],
-        left_side: bool = False, lower: bool = False,
-        transpose_a: bool = False, conjugate_a: bool = False,
-        unit_diagonal: bool = False,
+    a: Union[Quantity, jax.typing.ArrayLike],
+    b: Union[Quantity, jax.typing.ArrayLike],
+    left_side: bool = False, lower: bool = False,
+    transpose_a: bool = False, conjugate_a: bool = False,
+    unit_diagonal: bool = False,
 ) -> Quantity | jax.Array:
     r"""Triangular solve.
 
@@ -395,16 +395,18 @@ def triangular_solve(
     """
     if isinstance(a, Quantity) and isinstance(b, Quantity):
         return maybe_decimal(Quantity(lax.linalg.triangular_solve(a.mantissa, b.mantissa, left_side=left_side,
-                                                                 lower=lower, transpose_a=transpose_a, conjugate_a=conjugate_a,
-                                                                 unit_diagonal=unit_diagonal), unit=b.unit))
+                                                                  lower=lower, transpose_a=transpose_a,
+                                                                  conjugate_a=conjugate_a,
+                                                                  unit_diagonal=unit_diagonal), unit=b.unit))
     elif isinstance(a, Quantity):
         return lax.linalg.triangular_solve(a.mantissa, b, left_side=left_side,
-                                                                 lower=lower, transpose_a=transpose_a, conjugate_a=conjugate_a,
-                                                                 unit_diagonal=unit_diagonal)
+                                           lower=lower, transpose_a=transpose_a, conjugate_a=conjugate_a,
+                                           unit_diagonal=unit_diagonal)
     elif isinstance(b, Quantity):
         return maybe_decimal(Quantity(lax.linalg.triangular_solve(a, b.mantissa, left_side=left_side,
-                                                                    lower=lower, transpose_a=transpose_a, conjugate_a=conjugate_a,
-                                                                    unit_diagonal=unit_diagonal), unit=b.unit))
+                                                                  lower=lower, transpose_a=transpose_a,
+                                                                  conjugate_a=conjugate_a,
+                                                                  unit_diagonal=unit_diagonal), unit=b.unit))
     else:
         return lax.linalg.triangular_solve(a, b, left_side=left_side,
                                            lower=lower, transpose_a=transpose_a, conjugate_a=conjugate_a,
@@ -413,8 +415,8 @@ def triangular_solve(
 
 @set_module_as('brainunit.lax')
 def tridiagonal(
-        a: Union[Quantity, jax.typing.ArrayLike],
-        lower: bool = True,
+    a: Union[Quantity, jax.typing.ArrayLike],
+    lower: bool = True,
 ) -> tuple[Quantity | jax.Array, Quantity | jax.Array, Quantity | jax.Array, jax.Array]:
     """Reduces a symmetric/Hermitian matrix to tridiagonal form.
 
@@ -440,17 +442,17 @@ def tridiagonal(
     if isinstance(a, Quantity):
         arr, d, e, taus = lax.linalg.tridiagonal(a.mantissa, lower=lower)
         return maybe_decimal(Quantity(a, unit=a.unit)), maybe_decimal(Quantity(d, unit=a.unit)), \
-               maybe_decimal(Quantity(e, unit=a.unit)), taus
+            maybe_decimal(Quantity(e, unit=a.unit)), taus
     else:
         return lax.linalg.tridiagonal(a, lower=lower)
 
 
 @set_module_as('brainunit.lax')
 def tridiagonal_solve(
-        dl: Union[Quantity, jax.typing.ArrayLike],
-        d: Union[Quantity, jax.typing.ArrayLike],
-        du: Union[Quantity, jax.typing.ArrayLike],
-        b: Union[Quantity, jax.typing.ArrayLike],
+    dl: Union[Quantity, jax.typing.ArrayLike],
+    d: Union[Quantity, jax.typing.ArrayLike],
+    du: Union[Quantity, jax.typing.ArrayLike],
+    b: Union[Quantity, jax.typing.ArrayLike],
 ) -> Quantity | jax.Array:
     r"""Computes the solution of a tridiagonal linear system.
 
@@ -478,7 +480,8 @@ def tridiagonal_solve(
     fail_for_unit_mismatch(dl, du)
     if isinstance(b, Quantity):
         try:
-            return maybe_decimal(Quantity(lax.linalg.tridiagonal_solve(dl.mantissa, d.mantissa, du.mantissa, b.mantissa), unit=b.unit))
+            return maybe_decimal(
+                Quantity(lax.linalg.tridiagonal_solve(dl.mantissa, d.mantissa, du.mantissa, b.mantissa), unit=b.unit))
         except:
             return Quantity(lax.linalg.tridiagonal_solve(dl, d, du, b.mantissa), unit=b.unit)
     else:
@@ -486,4 +489,3 @@ def tridiagonal_solve(
             return lax.linalg.tridiagonal_solve(dl.mantissa, d.mantissa, du.mantissa, b)
         except:
             return lax.linalg.tridiagonal_solve(dl, d, du, b)
-
