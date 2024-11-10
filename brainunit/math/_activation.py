@@ -33,7 +33,7 @@ __all__ = [
 @set_module_as('brainunit.math')
 def relu(
     x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.typing.ArrayLike]:
+) -> Union[Quantity, jax.Array]:
     r"""Rectified linear unit activation function.
 
     Computes the element-wise function:
@@ -66,7 +66,7 @@ def relu(
 @set_module_as('brainunit.math')
 def relu6(
     x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.typing.ArrayLike]:
+) -> jax.Array:
     r"""Rectified Linear Unit 6 activation function.
 
     Computes the element-wise function
