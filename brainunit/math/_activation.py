@@ -17,8 +17,10 @@ from typing import Union
 import jax
 from jax import nn
 
-from ._fun_remove_unit import _fun_remove_unit_unary
-from .._base import Quantity
+from ._fun_accept_unitless import _fun_accept_unitless_unary
+from ._fun_array_creation import asarray
+from ._fun_keep_unit import _fun_keep_unit_unary, where
+from .._base import Quantity, get_mantissa, get_unit
 from .._misc import set_module_as
 
 __all__ = [
@@ -30,7 +32,7 @@ __all__ = [
 
 @set_module_as('brainunit.math')
 def relu(
-        x: Union[Quantity, jax.typing.ArrayLike],
+    x: Union[Quantity, jax.typing.ArrayLike],
 ) -> Union[Quantity, jax.typing.ArrayLike]:
     r"""Rectified linear unit activation function.
 
@@ -58,12 +60,12 @@ def relu(
         >>> jax.nn.relu(jax.numpy.array([-2., -1., -0.5, 0, 0.5, 1., 2.]))
         Array([0. , 0. , 0. , 0. , 0.5, 1. , 2. ], dtype=float32)
     """
-    return _fun_remove_unit_unary(nn.relu, x)
+    return _fun_keep_unit_unary(nn.relu, x)
 
 
 @set_module_as('brainunit.math')
 def relu6(
-        x: Union[Quantity, jax.typing.ArrayLike],
+    x: Union[Quantity, jax.typing.ArrayLike],
 ) -> Union[Quantity, jax.typing.ArrayLike]:
     r"""Rectified Linear Unit 6 activation function.
 
@@ -88,12 +90,12 @@ def relu6(
     Returns:
         An array.
     """
-    return _fun_remove_unit_unary(nn.relu6, x)
+    return _fun_accept_unitless_unary(nn.relu6, x)
 
 
 def sigmoid(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""Sigmoid activation function.
 
     Computes the element-wise function:
@@ -107,12 +109,12 @@ def sigmoid(
     Returns:
         An array.
     """
-    return _fun_remove_unit_unary(nn.sigmoid, x)
+    return _fun_accept_unitless_unary(nn.sigmoid, x)
 
 
 def softplus(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""Softplus activation function.
 
     Computes the element-wise function
@@ -123,12 +125,12 @@ def softplus(
     Args:
         x : input array
     """
-    return _fun_remove_unit_unary(nn.softplus, x)
+    return _fun_accept_unitless_unary(nn.softplus, x)
 
 
 def sparse_plus(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""Sparse plus function.
 
     Computes the function:
@@ -149,12 +151,12 @@ def sparse_plus(
     Args:
         x: input (float)
     """
-    return _fun_remove_unit_unary(nn.sparse_plus, x)
+    return _fun_accept_unitless_unary(nn.sparse_plus, x)
 
 
 def sparse_sigmoid(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""Sparse sigmoid activation function.
 
     Computes the function:
@@ -180,12 +182,12 @@ def sparse_sigmoid(
     Returns:
         An array.
     """
-    return _fun_remove_unit_unary(nn.sparse_sigmoid, x)
+    return _fun_accept_unitless_unary(nn.sparse_sigmoid, x)
 
 
 def soft_sign(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""Soft-sign activation function.
 
     Computes the element-wise function
@@ -196,12 +198,12 @@ def soft_sign(
     Args:
         x : input array
     """
-    return _fun_remove_unit_unary(nn.soft_sign, x)
+    return _fun_accept_unitless_unary(nn.soft_sign, x)
 
 
 def silu(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""SiLU (aka swish) activation function.
 
     Computes the element-wise function:
@@ -217,12 +219,12 @@ def silu(
     Returns:
         An array.
     """
-    return _fun_remove_unit_unary(nn.silu, x)
+    return _fun_accept_unitless_unary(nn.silu, x)
 
 
 def swish(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""Mish activation function.
 
     Computes the element-wise function:
@@ -240,12 +242,12 @@ def swish(
     Returns:
         An array.
     """
-    return _fun_remove_unit_unary(nn.swish, x)
+    return _fun_accept_unitless_unary(nn.swish, x)
 
 
 def log_sigmoid(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""Log-sigmoid activation function.
 
     Computes the element-wise function:
@@ -259,11 +261,12 @@ def log_sigmoid(
     Returns:
         An array.
     """
-    return _fun_remove_unit_unary(nn.log_sigmoid, x)
+    return _fun_accept_unitless_unary(nn.log_sigmoid, x)
 
 
 def leaky_relu(
-        x: Union[Quantity, jax.typing.ArrayLike],
+    x: Union[Quantity, jax.typing.ArrayLike],
+    negative_slope: jax.typing.ArrayLike = 1e-2
 ) -> Union[Quantity, jax.Array]:
     r"""Leaky rectified linear unit activation function.
 
@@ -284,12 +287,13 @@ def leaky_relu(
     Returns:
         An array.
     """
-    return _fun_remove_unit_unary(nn.leaky_relu, x)
+    x_arr = asarray(x)
+    return where(get_mantissa(x_arr) >= 0, x_arr, negative_slope * x_arr)
 
 
 def hard_sigmoid(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""Hard Sigmoid activation function.
 
     Computes the element-wise function
@@ -303,12 +307,12 @@ def hard_sigmoid(
     Returns:
         An array.
     """
-    return _fun_remove_unit_unary(nn.hard_sigmoid, x)
+    return _fun_accept_unitless_unary(nn.hard_sigmoid, x)
 
 
 def hard_silu(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""Hard SiLU (swish) activation function
 
     Computes the element-wise function
@@ -325,14 +329,14 @@ def hard_silu(
     Returns:
         An array.
     """
-    return _fun_remove_unit_unary(nn.hard_silu, x)
+    return _fun_accept_unitless_unary(nn.hard_silu, x)
 
 
 hard_swish = hard_silu
 
 
 def hard_tanh(
-        x: Union[Quantity, jax.typing.ArrayLike],
+    x: Union[Quantity, jax.typing.ArrayLike],
 ) -> Union[Quantity, jax.Array]:
     r"""Hard :math:`\mathrm{tanh}` activation function.
 
@@ -351,12 +355,17 @@ def hard_tanh(
     Returns:
         An array.
     """
-    return _fun_remove_unit_unary(nn.hard_tanh, x)
+    x_arr = asarray(x)
+    unit = get_unit(x)
+    return where(
+        get_mantissa(x_arr) > 1, 1 * unit,
+        where(get_mantissa(x_arr) < -1, -1 * unit, x_arr)
+    )
 
 
 def elu(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""Exponential linear unit activation function.
 
     Computes the element-wise function:
@@ -374,12 +383,12 @@ def elu(
     Returns:
         An array.
     """
-    return _fun_remove_unit_unary(nn.elu, x)
+    return _fun_accept_unitless_unary(nn.elu, x)
 
 
 def celu(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""Continuously-differentiable exponential linear unit activation.
 
     Computes the element-wise function:
@@ -401,12 +410,12 @@ def celu(
     Returns:
         An array.
     """
-    return _fun_remove_unit_unary(nn.celu, x)
+    return _fun_accept_unitless_unary(nn.celu, x)
 
 
 def selu(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""Scaled exponential linear unit activation.
 
     Computes the element-wise function:
@@ -430,12 +439,12 @@ def selu(
     Returns:
         An array.
     """
-    return _fun_remove_unit_unary(nn.selu, x)
+    return _fun_accept_unitless_unary(nn.selu, x)
 
 
 def gelu(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""Gaussian error linear unit activation function.
 
     If ``approximate=False``, computes the element-wise function:
@@ -457,12 +466,12 @@ def gelu(
         x: input array
         approximate: whether to use the approximate or exact formulation.
     """
-    return _fun_remove_unit_unary(nn.gelu, x)
+    return _fun_accept_unitless_unary(nn.gelu, x)
 
 
 def glu(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""Gated linear unit activation function.
 
     Computes the function:
@@ -482,12 +491,12 @@ def glu(
     Returns:
         An array.
     """
-    return _fun_remove_unit_unary(nn.glu, x)
+    return _fun_accept_unitless_unary(nn.glu, x)
 
 
 def squareplus(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""Squareplus activation function.
 
     Computes the element-wise function
@@ -501,12 +510,12 @@ def squareplus(
         x : input array
         b : smoothness parameter
     """
-    return _fun_remove_unit_unary(nn.squareplus, x)
+    return _fun_accept_unitless_unary(nn.squareplus, x)
 
 
 def mish(
-        x: Union[Quantity, jax.typing.ArrayLike],
-) -> Union[Quantity, jax.Array]:
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array:
     r"""Mish activation function.
 
     Computes the element-wise function:
@@ -524,4 +533,4 @@ def mish(
     Returns:
         An array.
     """
-    return _fun_remove_unit_unary(nn.mish, x)
+    return _fun_accept_unitless_unary(nn.mish, x)
