@@ -469,6 +469,7 @@ def gelu(
 
 def glu(
     x: Union[Quantity, jax.typing.ArrayLike],
+    axis: int = -1
 ) -> jax.Array:
     r"""Gated linear unit activation function.
 
@@ -489,11 +490,12 @@ def glu(
     Returns:
         An array.
     """
-    return _fun_accept_unitless_unary(nn.glu, x)
+    return _fun_accept_unitless_unary(nn.glu, x, axis=axis)
 
 
 def squareplus(
     x: Union[Quantity, jax.typing.ArrayLike],
+    b: jax.typing.ArrayLike = 4
 ) -> jax.Array:
     r"""Squareplus activation function.
 
@@ -508,7 +510,7 @@ def squareplus(
         x : input array
         b : smoothness parameter
     """
-    return _fun_accept_unitless_unary(nn.squareplus, x)
+    return _fun_accept_unitless_unary(nn.squareplus, x, b=b)
 
 
 def mish(
