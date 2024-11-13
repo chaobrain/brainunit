@@ -28,8 +28,13 @@ __all__ = [
     'rsqrt',
 
     # math funcs change unit (binary)
-    'conv', 'conv_transpose', 'div', 'dot_general',
-    'pow', 'integer_pow', 'mul', 'rem', 'batch_matmul',
+    'div', 'pow', 'integer_pow', 'mul', 'rem', 'batch_matmul',
+
+    # math funcs conv
+    'conv', 'conv_transpose',
+
+    # math funcs misc
+    'dot_general',
 ]
 
 
@@ -288,6 +293,8 @@ def rem(
         return maybe_decimal(Quantity(lax.rem(x.mantissa, y), unit=x.unit))
     elif isinstance(y, Quantity):
         return maybe_decimal(Quantity(lax.rem(x, y.mantissa), unit=UNITLESS))
+    else:
+        return lax.rem(x, y)
 
 
 @unit_change(lambda x, y: x * y)
