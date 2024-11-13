@@ -49,11 +49,11 @@ class TestLaxAcceptUnitless(parameterized.TestCase):
     )
     def test_lax_accept_unitless_unary(self, value):
         for fun_name in lax_accept_unitless_unary:
-            fun = getattr(bulax, fun_name)
+            bulax_fun = getattr(bulax, fun_name)
             lax_fun = getattr(lax, fun_name)
-            print(f'fun: {fun}')
+            print(f'fun: {bulax_fun}')
 
-            result = fun(jnp.array(value))
+            result = bulax_fun(jnp.array(value))
             expected = lax_fun(jnp.array(value))
             assert_quantity(result, expected)
 
@@ -62,15 +62,15 @@ class TestLaxAcceptUnitless(parameterized.TestCase):
                                      (bu.mV, bu.mV),
                                      (bu.nA, bu.amp)]:
                 q = value * unit
-                result = fun(q, unit_to_scale=unit2scale)
+                result = bulax_fun(q, unit_to_scale=unit2scale)
                 expected = lax_fun(q.to_decimal(unit2scale))
                 assert_quantity(result, expected)
 
                 with pytest.raises(AssertionError):
-                    result = fun(q)
+                    result = bulax_fun(q)
 
                 with pytest.raises(bu.UnitMismatchError):
-                    result = fun(q, unit_to_scale=bu.nS)
+                    result = bulax_fun(q, unit_to_scale=bu.nS)
 
     @parameterized.product(
         value=[[(1.0, 2.0), (3.0, 4.0), ],
@@ -78,41 +78,41 @@ class TestLaxAcceptUnitless(parameterized.TestCase):
     )
     def test_lax_accept_unitless_binary(self, value):
         value1, value2 = value
-        bm_fun_list = [getattr(bulax, fun) for fun in lax_accept_unitless_binary]
-        jnp_fun_list = [getattr(lax, fun) for fun in lax_accept_unitless_binary]
+        bulax_fun_list = [getattr(bulax, fun) for fun in lax_accept_unitless_binary]
+        lax_fun_list = [getattr(lax, fun) for fun in lax_accept_unitless_binary]
 
-        for bm_fun, jnp_fun in zip(bm_fun_list, jnp_fun_list):
-            print(f'fun: {bm_fun.__name__}')
+        for bulax_fun, lax_fun in zip(bulax_fun_list, lax_fun_list):
+            print(f'fun: {bulax_fun.__name__}')
 
-            result = bm_fun(jnp.array(value1), jnp.array(value2))
-            expected = jnp_fun(jnp.array(value1), jnp.array(value2))
+            result = bulax_fun(jnp.array(value1), jnp.array(value2))
+            expected = lax_fun(jnp.array(value1), jnp.array(value2))
             assert_quantity(result, expected)
 
             q1 = value1 * meter
             q2 = value2 * meter
-            result = bm_fun(q1, q2, unit_to_scale=bu.dametre)
-            expected = jnp_fun(q1.to_decimal(bu.dametre), q2.to_decimal(bu.dametre))
+            result = bulax_fun(q1, q2, unit_to_scale=bu.dametre)
+            expected = lax_fun(q1.to_decimal(bu.dametre), q2.to_decimal(bu.dametre))
             assert_quantity(result, expected)
 
             with pytest.raises(AssertionError):
-                result = bm_fun(q1, q2)
+                result = bulax_fun(q1, q2)
 
             with pytest.raises(bu.UnitMismatchError):
-                result = bm_fun(q1, q2, unit_to_scale=bu.second)
+                result = bulax_fun(q1, q2, unit_to_scale=bu.second)
 
     @parameterized.product(
         value=[[(0, 1), (1, 1)]]
     )
     def test_lax_bit_operation_binary(self, value):
         value1, value2 = value
-        bm_fun_list = [getattr(bulax, fun) for fun in lax_bit_operation_binary]
-        jnp_fun_list = [getattr(lax, fun) for fun in lax_bit_operation_binary]
+        bulax_fun_list = [getattr(bulax, fun) for fun in lax_bit_operation_binary]
+        lax_fun_list = [getattr(lax, fun) for fun in lax_bit_operation_binary]
 
-        for bm_fun, jnp_fun in zip(bm_fun_list, jnp_fun_list):
-            print(f'fun: {bm_fun.__name__}')
+        for bulax_fun, lax_fun in zip(bulax_fun_list, lax_fun_list):
+            print(f'fun: {bulax_fun.__name__}')
 
-            result = bm_fun(jnp.array(value1), jnp.array(value2))
-            expected = jnp_fun(jnp.array(value1), jnp.array(value2))
+            result = bulax_fun(jnp.array(value1), jnp.array(value2))
+            expected = lax_fun(jnp.array(value1), jnp.array(value2))
             assert_quantity(result, expected)
 
             q1 = value1 * meter
@@ -122,7 +122,7 @@ class TestLaxAcceptUnitless(parameterized.TestCase):
             # assert_quantity(result, expected)
 
             with pytest.raises(AssertionError):
-                result = bm_fun(q1, q2)
+                result = bulax_fun(q1, q2)
 
     @parameterized.product(
         value=[[(1.0, 2.0), (3.0, 4.0), (5.0, 6.0)],
@@ -131,26 +131,26 @@ class TestLaxAcceptUnitless(parameterized.TestCase):
     def test_lax_betainc(self, value):
         value1, value2, value3 = value
         fun_name = 'betainc'
-        fun = getattr(bulax, fun_name)
+        bulax_fun = getattr(bulax, fun_name)
         lax_fun = getattr(lax, fun_name)
-        print(f'fun: {fun}')
+        print(f'fun: {bulax_fun}')
 
-        result = fun(jnp.array(value1), jnp.array(value2), jnp.array(value3))
+        result = bulax_fun(jnp.array(value1), jnp.array(value2), jnp.array(value3))
         expected = lax_fun(jnp.array(value1), jnp.array(value2), jnp.array(value3))
         assert_quantity(result, expected)
 
         q1 = value1 * meter
         q2 = value2 * meter
         q3 = value3 * meter
-        result = fun(q1, q2, q3, unit_to_scale=bu.dametre)
+        result = bulax_fun(q1, q2, q3, unit_to_scale=bu.dametre)
         expected = lax_fun(q1.to_decimal(bu.dametre), q2.to_decimal(bu.dametre), q3.to_decimal(bu.dametre))
         assert_quantity(result, expected)
 
         with pytest.raises(AssertionError):
-            result = fun(q1, q2, q3)
+            result = bulax_fun(q1, q2, q3)
 
         with pytest.raises(bu.UnitMismatchError):
-            result = fun(q1, q2, q3, unit_to_scale=bu.second)
+            result = bulax_fun(q1, q2, q3, unit_to_scale=bu.second)
 
     @parameterized.product(
         value=[[(0, 1), 1]]
@@ -158,21 +158,21 @@ class TestLaxAcceptUnitless(parameterized.TestCase):
     def test_lax_collapse(self, value):
         value1, value2 = value
         fun_name = 'collapse'
-        fun = getattr(bulax, fun_name)
+        bulax_fun = getattr(bulax, fun_name)
         lax_fun = getattr(lax, fun_name)
-        print(f'fun: {fun}')
+        print(f'fun: {bulax_fun}')
 
-        result = fun(jnp.array(value1), value2)
+        result = bulax_fun(jnp.array(value1), value2)
         expected = lax_fun(jnp.array(value1), value2)
         assert_quantity(result, expected)
 
         q1 = value1 * meter
-        result = fun(q1, value2, unit_to_scale=bu.dametre)
+        result = bulax_fun(q1, value2, unit_to_scale=bu.dametre)
         expected = lax_fun(q1.to_decimal(bu.dametre), value2)
         assert_quantity(result, expected)
 
         with pytest.raises(AssertionError):
-            result = fun(q1, value2)
+            result = bulax_fun(q1, value2)
 
         with pytest.raises(bu.UnitMismatchError):
-            result = fun(q1, value2, unit_to_scale=bu.second)
+            result = bulax_fun(q1, value2, unit_to_scale=bu.second)
