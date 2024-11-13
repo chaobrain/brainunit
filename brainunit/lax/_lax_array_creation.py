@@ -24,26 +24,19 @@ from .._base import Unit, Quantity
 Shape = Union[int, Sequence[int]]
 
 __all__ = [
-    # array creation(given shape)
-
     # array creation(given array)
     'zeros_like_array',
 
     # array creation(misc)
     'iota', 'broadcasted_iota',
-
-    # indexing funcs
-
-    # others
-
 ]
 
 
 # array creation (given array)
 @set_module_as('brainunit.lax')
 def zeros_like_array(
-        x: Union[Quantity, jax.typing.ArrayLike],
-        unit: Optional[Unit] = None,
+    x: Union[Quantity, jax.typing.ArrayLike],
+    unit: Optional[Unit] = None,
 ) -> Union[Quantity, jax.Array]:
     if isinstance(x, Quantity):
         if unit is not None:
@@ -61,9 +54,9 @@ def zeros_like_array(
 # array creation (misc)
 @set_module_as('brainunit.lax')
 def iota(
-        dtype: jax.typing.DTypeLike,
-        size: int,
-        unit: Optional[Unit] = None,
+    dtype: jax.typing.DTypeLike,
+    size: int,
+    unit: Optional[Unit] = None,
 ) -> Union[Quantity, jax.Array]:
     """Wraps XLA's `Iota  operator."""
     if unit is not None:
@@ -75,11 +68,11 @@ def iota(
 
 @set_module_as('brainunit.lax')
 def broadcasted_iota(
-        dtype: jax.typing.DTypeLike,
-        shape: Shape,
-        dimension: int,
-        _sharding=None,
-        unit: Optional[Unit] = None,
+    dtype: jax.typing.DTypeLike,
+    shape: Shape,
+    dimension: int,
+    _sharding=None,
+    unit: Optional[Unit] = None,
 ) -> Union[Quantity, jax.Array]:
     """Convenience wrapper around ``iota``."""
     if unit is not None:
@@ -87,4 +80,3 @@ def broadcasted_iota(
         return lax.broadcasted_iota(dtype, shape, dimension, _sharding) * unit
     else:
         return lax.broadcasted_iota(dtype, shape, dimension, _sharding)
-
