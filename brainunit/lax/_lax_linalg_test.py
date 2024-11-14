@@ -1,16 +1,32 @@
-import jax.numpy as jnp
-import jax.lax as lax
-import pytest
-from absl.testing import parameterized
+lax_linear_algebra_keep_unit_unary = [
+    'eigh',
+]
 
-import brainunit as bu
-import brainunit.lax as bulax
-from brainunit import meter
-from brainunit._base import assert_quantity
+lax_linear_algebra_change_unit_unary = [
+    'cholesky',
+]
 
-lax_linear_algebra_unary = [
-    'cholesky', 'eig', 'eigh', 'hessenberg', 'lu',
-    'qdwh', 'qr', 'schur', 'svd',
+lax_linear_algebra_keep_unit_unary_return_2 = [
+    'eigh', 'hessenberg', 'qr',
+]
+
+lax_linear_algebra_keep_unit_unary_return_3 = [
+    'eig', 'lu',
+]
+
+lax_linear_algebra_qdwh = [
+    'qdwh',
+]
+
+lax_linear_algebra_schur = [
+    'schur',
+]
+
+lax_linear_algebra_svd = [
+    'svd',
+]
+
+lax_linear_algebra_tridiagonal = [
     'tridiagonal',
 ]
 

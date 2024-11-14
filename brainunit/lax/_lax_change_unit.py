@@ -217,10 +217,16 @@ def dot_general(
         by the ``lhs`` non-contracting/non-batch dimensions, and finally the ``rhs``
         non-contracting/non-batch dimensions.
     """
-    return _fun_change_unit_binary(lax.dot_general,
-                                   lambda x, y: x * y,
-                                   x, y,
-                                   dimension_numbers, precision, preferred_element_type, out_type)
+    try:
+        return _fun_change_unit_binary(lax.dot_general,
+                                       lambda x, y: x * y,
+                                       x, y,
+                                       dimension_numbers, precision, preferred_element_type, out_type)
+    except:
+        return _fun_change_unit_binary(lax.dot_general,
+                                       lambda x, y: x * y,
+                                       x, y,
+                                       dimension_numbers, precision, preferred_element_type)
 
 
 @set_module_as('brainunit.lax')
