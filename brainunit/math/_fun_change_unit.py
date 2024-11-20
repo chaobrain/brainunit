@@ -37,7 +37,7 @@ __all__ = [
 
     # linear algebra
     'dot', 'multi_dot', 'vdot', 'vecdot', 'inner', 'outer', 'kron', 'matmul', 'tensordot',
-    'matrix_power',
+    'matrix_power', 'det',
 ]
 
 
@@ -1341,3 +1341,35 @@ def matrix_power(
         return maybe_decimal(Quantity(jnp.linalg.matrix_power(a.mantissa, n), unit=a.unit ** n))
     else:
         return jnp.linalg.matrix_power(a, n)
+
+@set_module_as('brainunit.math')
+def det(
+    a: Union[jax.typing.ArrayLike, Quantity],
+) -> Union[jax.typing.ArrayLike, Quantity]:
+    """
+    Compute the determinant of an array.
+
+    JAX implementation of :func:`numpy.linalg.det`.
+
+    Args:
+        a: array of shape ``(..., M, M)`` for which to compute the determinant.
+
+    Returns:
+        An array of determinants of shape ``a.shape[:-2]``.
+
+    Examples:
+    >>> a = jnp.array([[1, 2],
+    ...                [3, 4]])
+    >>> jnp.linalg.det(a)
+    Array(-2., dtype=float32)
+    """
+    if isinstance(a, Quantity):
+        a_shape = a.shape
+        if len(a_shape) >= 2 and a_shape[-1] == a_shape[-2]:
+            new_unit = a.unit ** a_shape[-1]
+        else:
+            msg = "Argument to _det() must have shape [..., n, n], got {}"
+            raise ValueError(msg.format(a_shape))
+        return Quantity(jnp.linalg.det(a.mantissa), unit=new_unit)
+    else:
+        return jnp.linalg.det(a)
