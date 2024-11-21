@@ -2447,6 +2447,14 @@ class Quantity:
         # which should be more clear when add a "*" operator
         return self.repr_in_unit(python_code=True)
 
+    def __format__(self, format_spec):
+        # check if scalar
+        if self.shape == ():
+            formatted_value = format(self.mantissa, format_spec)
+            return f"{formatted_value} * {self.unit}"
+        else:
+            return self.__str__()
+
     def __iter__(self):
         """Solve the issue of DeviceArray.__iter__.
 
