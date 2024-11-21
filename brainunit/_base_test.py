@@ -16,6 +16,8 @@
 
 import os
 
+from brainunit import UnitMismatchError
+
 os.environ['JAX_TRACEBACK_FILTERING'] = 'off'
 import itertools
 import unittest
@@ -1209,7 +1211,7 @@ class TestHelperFunctions(unittest.TestCase):
             a_function(5 * second, None)
         with pytest.raises(DimensionMismatchError):
             a_function(5, None)
-        with pytest.raises(AttributeError):
+        with pytest.raises(DimensionMismatchError):
             a_function(object(), None)
         with pytest.raises(TypeError):
             a_function([1, 2 * volt, 3], None)
@@ -1277,7 +1279,7 @@ class TestHelperFunctions(unittest.TestCase):
             a_function(5 * second, None)
         with pytest.raises(u.UnitMismatchError):
             a_function(5, None)
-        with pytest.raises(AttributeError):
+        with pytest.raises(u.UnitMismatchError):
             a_function(object(), None)
         with pytest.raises(TypeError):
             a_function([1, 2 * volt, 3], None)
@@ -1531,3 +1533,9 @@ class TestGetMethod(unittest.TestCase):
         assert u.get_mantissa(u.mV.dim / u.second.dim) == u.mV.dim / u.second.dim
         assert u.get_mantissa(u.mV.dim / u.second.dim ** 2) == u.mV.dim / u.second.dim ** 2
         assert u.get_mantissa(u.mV.dim ** 2 / u.second.dim ** 2) == u.mV.dim ** 2 / u.second.dim ** 2
+
+    def test_format(self):
+        q = 1.23456789 * u.mV
+        assert f"{q:.2f}" == "1.23 * mV"
+        assert f"{q:.3f}" == "1.235 * mV"
+        assert f"{q:.4f}" == "1.2346 * mV"
