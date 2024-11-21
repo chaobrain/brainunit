@@ -16,8 +16,6 @@
 
 import os
 
-from brainunit import UnitMismatchError
-
 os.environ['JAX_TRACEBACK_FILTERING'] = 'off'
 import itertools
 import unittest
