@@ -35,6 +35,11 @@ fun_keep_unit_math_unary = [
     'nanmin', 'nanmax', 'ptp', 'average', 'mean', 'std',
     'nanmedian', 'nanmean', 'nanstd', 'diff', 'nan_to_num',
 ]
+
+fun_keep_unit_math_unary_linalg = [
+    'norm',
+]
+
 fun_accept_unitless_unary_can_return_quantity = [
     'round', 'around', 'round_', 'rint',
     'floor', 'ceil', 'trunc', 'fix',
@@ -605,6 +610,26 @@ class TestFunKeepUnit(parameterized.TestCase):
     def test_fun_keep_unit_math_unary(self, value, unit):
         bm_fun_list = [getattr(bm, fun) for fun in fun_keep_unit_math_unary]
         jnp_fun_list = [getattr(jnp, fun) for fun in fun_keep_unit_math_unary]
+
+        for bm_fun, jnp_fun in zip(bm_fun_list, jnp_fun_list):
+            print(f'fun: {bm_fun.__name__}')
+
+            result = bm_fun(jnp.array(value))
+            expected = jnp_fun(jnp.array(value))
+            assert_quantity(result, expected)
+
+            q = value * unit
+            result = bm_fun(q)
+            expected = jnp_fun(jnp.array(value))
+            assert_quantity(result, expected, unit=unit)
+
+    @parameterized.product(
+        value=[(1.0, 2.0), (1.23, 2.34, 3.45)],
+        unit=[second, meter]
+    )
+    def test_fun_keep_unit_math_unary_linalg(self, value, unit):
+        bm_fun_list = [getattr(bm, fun) for fun in fun_keep_unit_math_unary_linalg]
+        jnp_fun_list = [getattr(jnp.linalg, fun) for fun in fun_keep_unit_math_unary_linalg]
 
         for bm_fun, jnp_fun in zip(bm_fun_list, jnp_fun_list):
             print(f'fun: {bm_fun.__name__}')
