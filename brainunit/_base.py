@@ -2451,9 +2451,16 @@ class Quantity:
         # check if scalar
         if self.shape == ():
             formatted_value = format(self.mantissa, format_spec)
-            return f"{formatted_value} * {self.unit}"
+            return f"{formatted_value} * {self.unit.name}"
         else:
-            return self.__str__()
+            try:
+                # Extract the number of decimal places from the format_spec
+                decimal_places = int(format_spec.strip('f').strip('.'))
+
+                rounded_value = self.round(decimal_places)
+                return rounded_value.__repr__()
+            except:
+                return self.__repr__()
 
     def __iter__(self):
         """Solve the issue of DeviceArray.__iter__.

@@ -1535,7 +1535,13 @@ class TestGetMethod(unittest.TestCase):
         assert u.get_mantissa(u.mV.dim ** 2 / u.second.dim ** 2) == u.mV.dim ** 2 / u.second.dim ** 2
 
     def test_format(self):
-        q = 1.23456789 * u.mV
-        assert f"{q:.2f}" == "1.23 * mV"
-        assert f"{q:.3f}" == "1.235 * mV"
-        assert f"{q:.4f}" == "1.2346 * mV"
+        with bst.environ.context(precision=64):
+            q1 = 1.23456789 * u.mV
+            assert f"{q1:.2f}" == "1.23 * mvolt"
+            assert f"{q1:.3f}" == "1.235 * mvolt"
+            assert f"{q1:.4f}" == "1.2346 * mvolt"
+
+            q2 = [1.23456789, 1.23456789] * u.mV
+            assert f"{q2:.2f}" == "ArrayImpl([1.23, 1.23]) * mvolt"
+            assert f"{q2:.3f}" == "ArrayImpl([1.235, 1.235]) * mvolt"
+            assert f"{q2:.4f}" == "ArrayImpl([1.2346, 1.2346]) * mvolt"
