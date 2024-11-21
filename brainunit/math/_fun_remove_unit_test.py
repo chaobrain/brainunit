@@ -33,10 +33,15 @@ fun_remove_unit_logic_binary = [
     'logical_or', 'logical_xor',
 ]
 
-fun_remove_unit_indexing = [
+fun_remove_unit_indexing_1d = [
     'argsort', 'argmax', 'argmin', 'nanargmax', 'nanargmin', 'argwhere',
     'count_nonzero',
 ]
+
+fun_remove_unit_indexing_nd = [
+    'diag_indices_from',
+]
+
 fun_remove_unit_indexing_return_tuple = [
     'nonzero', 'flatnonzero',
 ]
@@ -202,9 +207,9 @@ class TestFunChangeUnit(parameterized.TestCase):
         value=[(1.0, 2.0), (1.23, 2.34, 3.45)],
         unit=[bu.meter, bu.second]
     )
-    def test_fun_remove_unit_indexing(self, value, unit):
-        bm_fun_list = [getattr(bm, fun) for fun in fun_remove_unit_indexing]
-        jnp_fun_list = [getattr(jnp, fun) for fun in fun_remove_unit_indexing]
+    def test_fun_remove_unit_indexing_1d(self, value, unit):
+        bm_fun_list = [getattr(bm, fun) for fun in fun_remove_unit_indexing_1d]
+        jnp_fun_list = [getattr(jnp, fun) for fun in fun_remove_unit_indexing_1d]
 
         for bm_fun, jnp_fun in zip(bm_fun_list, jnp_fun_list):
             print(f'fun: {bm_fun.__name__}')
@@ -217,6 +222,37 @@ class TestFunChangeUnit(parameterized.TestCase):
             result = bm_fun(q)
             expected = jnp_fun(jnp.array(value))
             assert_quantity(result, expected)
+
+    @parameterized.product(
+        value=[(
+            [1.0, 2.0],
+            [3.0, 4.0],
+        ),
+            (
+                [1.0, 2.0, 3.0],
+                [4.0, 5.0, 6.0],
+                [7.0, 8.0, 9.0]
+            ),
+        ],
+        unit=[bu.meter, bu.second]
+    )
+    def test_fun_remove_unit_indexing_nd(self, value, unit):
+        bm_fun_list = [getattr(bm, fun) for fun in fun_remove_unit_indexing_nd]
+        jnp_fun_list = [getattr(jnp, fun) for fun in fun_remove_unit_indexing_nd]
+
+        for bm_fun, jnp_fun in zip(bm_fun_list, jnp_fun_list):
+            print(f'fun: {bm_fun.__name__}')
+
+            result = bm_fun(jnp.array(value))
+            expected = jnp_fun(jnp.array(value))
+            assert (result[0] == expected[0]).all()
+            assert (result[1] == expected[1]).all()
+
+            q = value * unit
+            result = bm_fun(q)
+            expected = jnp_fun(jnp.array(value))
+            assert (result[0] == expected[0]).all()
+            assert (result[1] == expected[1]).all()
 
     @parameterized.product(
         value=[(1.0, 2.0), (1.23, 2.34, 3.45)],

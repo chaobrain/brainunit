@@ -39,7 +39,6 @@ __all__ = [
     'nonzero', 'flatnonzero', 'searchsorted', 'count_nonzero', 'diag_indices_from',
 ]
 
-jnp.linalg.det
 # math funcs remove unit (unary)
 # ------------------------------
 

@@ -26,6 +26,11 @@ fun_change_unit_binary_divmod = [
 fun_change_unit_linear_algebra = [
     'dot', 'vdot', 'inner', 'outer', 'kron', 'matmul',
 ]
+
+fun_change_unit_linear_algebra_det = [
+    'det',
+]
+
 fun_change_unit_binary_tensordot = [
     'tensordot',
 ]
@@ -171,6 +176,38 @@ class TestFunChangeUnit(parameterized.TestCase):
             result = bm_fun(q1, q2)
             expected = jnp_fun(jnp.array(value1), jnp.array(value2))
             assert_quantity(result, expected, unit=bm_fun._unit_change_fun(bu.get_unit(unit1), bu.get_unit(unit2)))
+
+    @parameterized.product(
+        value=[(
+            [1.0, 2.0],
+            [3.0, 4.0],
+        ),
+            (
+                [1.0, 2.0, 3.0],
+                [4.0, 5.0, 6.0],
+                [7.0, 8.0, 9.0]
+            ),
+        ],
+        unit=[meter, second],
+    )
+    def test_fun_change_unit_linear_algebra_det(self, value, unit):
+        bm_fun_list = [getattr(bm, fun) for fun in fun_change_unit_linear_algebra_det]
+        jnp_fun_list = [getattr(jnp.linalg, fun) for fun in fun_change_unit_linear_algebra_det]
+        value = jnp.array(value)
+        for bm_fun, jnp_fun in zip(bm_fun_list, jnp_fun_list):
+            print(f'fun: {bm_fun.__name__}')
+
+            result = bm_fun(value)
+            expected = jnp_fun(value)
+            assert_quantity(result, expected)
+
+            q = value * unit
+            result = bm_fun(q)
+            expected = jnp_fun(value)
+
+            result_unit = unit ** value.shape[-1]
+
+            assert_quantity(result, expected, unit=result_unit)
 
     @parameterized.product(
         value=[(((1, 2), (3, 4)), ((1, 2), (3, 4))), ],
