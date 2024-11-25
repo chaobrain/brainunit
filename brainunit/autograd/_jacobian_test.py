@@ -14,6 +14,8 @@
 # ==============================================================================
 
 
+from __future__ import annotations
+
 import brainstate as bst
 import jax.numpy as jnp
 import pytest
@@ -96,9 +98,6 @@ def test_jacrev_function3():
         jac['o2']['z'],
         u.math.diag(x)
     )
-
-
-
 
 
 def test_jacrev_with_aux():

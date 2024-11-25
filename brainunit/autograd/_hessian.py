@@ -13,6 +13,8 @@
 # limitations under the License.
 # ==============================================================================
 
+from __future__ import annotations
+
 from typing import (Sequence, Callable)
 
 from ._jacobian import jacrev, jacfwd

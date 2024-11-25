@@ -15,10 +15,10 @@
 
 from __future__ import annotations
 
-import operator
-from typing import Any
 import inspect
-from functools import partial, wraps
+import operator
+from functools import partial
+from typing import Any
 
 import jax
 
@@ -32,6 +32,7 @@ def _ensure_index(x: Any) -> int | tuple[int, ...]:
         return operator.index(x)
     except TypeError:
         return tuple(map(operator.index, x))
+
 
 def _isgeneratorfunction(fun):
     # re-implemented here because of https://bugs.python.org/issue33261
@@ -51,4 +52,3 @@ def _check_callable(fun):
         raise TypeError(f"Expected a callable value, got {fun}")
     if _isgeneratorfunction(fun):
         raise TypeError(f"Expected a function, got a generator function: {fun}")
-

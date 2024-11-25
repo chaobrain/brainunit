@@ -21,7 +21,7 @@ from typing import (Any, Sequence, Callable)
 import jax
 
 from brainunit._base import get_mantissa, get_unit, Quantity, maybe_decimal
-from ._misc import _ensure_index, _check_callable
+from ._misc import _ensure_index
 
 __all__ = [
     'value_and_grad',
