@@ -56,12 +56,13 @@ def test_vector_grad_multiple_args():
 
 def test_vector_grad_with_aux():
     def function_with_aux(x):
-        return x ** 2, jnp.sum(x * 3)
+        return x ** 2, u.math.sum(x * 3)
 
     for unit in [u.UNITLESS, u.mV, u.ms, u.siemens]:
-        vector_grad_fn = u.autograd.vector_grad(function_with_aux, has_aux=True)
-        (value, aux), grad = vector_grad_fn(jnp.array([3.0, 4.0]) * unit)
-        assert u.math.allclose(value, jnp.array(25.0) * unit ** 2)
+        vector_grad_fn = u.autograd.vector_grad(function_with_aux, has_aux=True, return_value=True)
+        x = jnp.array([3.0, 4.0]) * unit
+        grad, value, aux = vector_grad_fn(x)
+        assert u.math.allclose(value, x ** 2)
         assert u.math.allclose(aux, jnp.array(21.0) * unit)
         assert u.math.allclose(grad, jnp.array([6.0, 8.0]) * unit)
 

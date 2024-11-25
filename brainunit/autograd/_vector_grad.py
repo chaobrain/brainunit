@@ -59,7 +59,7 @@ def vector_grad(
         grads = vjp_fn(tangents)
         if unit_aware:
             args_to_grad = jax.tree.map(lambda i: args[i], argnums)
-            r_unit = get_unit(leaves[0])
+            r_unit = get_unit(jax.tree.leaves(y, is_leaf=lambda x: isinstance(x, Quantity))[0])
             grads = jax.tree.map(
                 lambda arg, grad: maybe_decimal(
                     Quantity(get_mantissa(grad), unit=r_unit / get_unit(arg))
