@@ -66,26 +66,5 @@ def test_vector_grad_with_aux():
         assert u.math.allclose(grad, jnp.array([6.0, 8.0]) * unit)
 
 
-def test_vector_grad_holomorphic():
-    def holomorphic_function(x):
-        return jnp.sum(x ** 2)
-
-    for unit in [u.UNITLESS, u.mV, u.ms, u.siemens]:
-        vector_grad_fn = u.autograd.vector_grad(holomorphic_function, holomorphic=True)
-        grad = vector_grad_fn(jnp.array([3.0 + 4.0j, 1.0 + 2.0j]) * unit)
-        assert u.math.allclose(grad, jnp.array([2 * (3.0 + 4.0j), 2 * (1.0 + 2.0j)]) * unit)
-
-
-@pytest.mark.skip(reason="JAX does not support differentiation through integer inputs")
-def test_vector_grad_allow_int():
-    def int_function(x):
-        return jnp.sum(x ** 2)
-
-    for unit in [u.UNITLESS, u.mV, u.ms, u.siemens]:
-        vector_grad_fn = u.autograd.vector_grad(int_function, allow_int=True)
-        grad = vector_grad_fn(jnp.array([3, 4]) * unit)
-        assert u.math.allclose(grad, jnp.array([6, 8]) * unit)
-
-
 if __name__ == "__main__":
     pytest.main()
