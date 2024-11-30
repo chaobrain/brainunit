@@ -15,9 +15,11 @@
 
 from __future__ import annotations
 
-from ..math._fun_change_unit import (dot, multi_dot, vdot, vecdot, inner,
-                                     outer, kron, matmul, tensordot,
-                                     matrix_power, det)
+from ..math._fun_change_unit import (
+    dot, multi_dot, vdot, vecdot, inner,
+    outer, kron, matmul, tensordot,
+    matrix_power, det
+)
 
 __all__ = [
     'dot', 'multi_dot', 'vdot', 'vecdot',
