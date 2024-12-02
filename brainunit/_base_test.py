@@ -1185,7 +1185,7 @@ class TestHelperFunctions(unittest.TestCase):
 
     def test_check_dims(self):
         """
-        Test the check_units decorator
+        Test the check_dims decorator
         """
 
         @u.check_dims(v=volt.dim)
@@ -1247,6 +1247,24 @@ class TestHelperFunctions(unittest.TestCase):
             c_function(1 * mV, 1)
         with pytest.raises(TypeError):
             c_function(False, 1)
+
+        # Multiple results
+        @u.check_dims(result=(second.dim, volt.dim))
+        def d_function(true_result):
+            """
+            Return a value in seconds if return_second is True, otherwise return
+            a value in volt.
+            """
+            if true_result:
+                return 5 * second, 3 * volt
+            else:
+                return 3 * volt, 5 * second
+
+        # Should work (returns second)
+        d_function(True)
+        # Should fail (returns volt)
+        with pytest.raises(u.DimensionMismatchError):
+            d_function(False)
 
     def test_check_units(self):
         """
@@ -1315,6 +1333,25 @@ class TestHelperFunctions(unittest.TestCase):
             c_function(1 * mV, 1)
         with pytest.raises(TypeError):
             c_function(False, 1)
+
+        # Multiple results
+        @check_units(result=(second, volt))
+        def d_function(true_result):
+            """
+            Return a value in seconds if return_second is True, otherwise return
+            a value in volt.
+            """
+            if true_result:
+                return 5 * second, 3 * volt
+            else:
+                return 3 * volt, 5 * second
+
+        # Should work (returns second)
+        d_function(True)
+        # Should fail (returns volt)
+        with pytest.raises(u.UnitMismatchError):
+            d_function(False)
+
 
 
 def test_str_repr():

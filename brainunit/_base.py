@@ -4146,24 +4146,44 @@ def check_dims(**au):
                     expected_result = au["result"](*[get_dim(a) for a in args])
                 else:
                     expected_result = au["result"]
-                if au["result"] == bool:
-                    if not isinstance(result, bool):
+                if isinstance(expected_result, tuple):
+                    if not isinstance(result, tuple) or len(result) !=len(expected_result):
                         error_message = (
                             "The return value of function "
-                            f"'{f.__name__}' was expected to be "
-                            "a boolean value, but was of type "
-                            f"{type(result)}"
+                            f"'{f.__name__}' was expected to be a tuple of length "
+                            f"{len(expected_result)} but was of type "
+                            f"{type(result)} with length {len(result) if isinstance(result, tuple) else 'N/A'}"
                         )
                         raise TypeError(error_message)
-                elif not have_same_dim(result, expected_result):
-                    unit = get_dim_for_display(expected_result)
-                    error_message = (
-                        "The return value of function "
-                        f"'{f.__name__}' was expected to have "
-                        f"dimension {unit} but was "
-                        f"'{result}'"
-                    )
-                    raise DimensionMismatchError(error_message, get_dim(result))
+                    for res, exp_res in zip(result, expected_result):
+                        if not have_same_dim(res, exp_res):
+                            unit = get_dim_for_display(exp_res)
+                            error_message = (
+                                "The return value of function "
+                                f"'{f.__name__}' was expected to have "
+                                f"dimension {unit} but was "
+                                f"'{res}'"
+                            )
+                            raise DimensionMismatchError(error_message, get_dim(res))
+                else:
+                    if au["result"] == bool:
+                        if not isinstance(result, bool):
+                            error_message = (
+                                "The return value of function "
+                                f"'{f.__name__}' was expected to be "
+                                "a boolean value, but was of type "
+                                f"{type(result)}"
+                            )
+                            raise TypeError(error_message)
+                    elif not have_same_dim(result, expected_result):
+                        unit = get_dim_for_display(expected_result)
+                        error_message = (
+                            "The return value of function "
+                            f"'{f.__name__}' was expected to have "
+                            f"dimension {unit} but was "
+                            f"'{result}'"
+                        )
+                        raise DimensionMismatchError(error_message, get_dim(result))
             return result
 
         new_f._orig_func = f
@@ -4388,23 +4408,42 @@ def check_units(**au):
                     expected_result = au["result"](*[get_dim(a) for a in args])
                 else:
                     expected_result = au["result"]
-                if au["result"] == bool:
-                    if not isinstance(result, bool):
+                if isinstance(expected_result, tuple):
+                    if not isinstance(result, tuple) or len(result) != len(expected_result):
                         error_message = (
                             "The return value of function "
-                            f"'{f.__name__}' was expected to be "
-                            "a boolean value, but was of type "
-                            f"{type(result)}"
+                            f"'{f.__name__}' was expected to be a tuple of length "
+                            f"{len(expected_result)}, but was of type "
+                            f"{type(result)} with length {len(result) if isinstance(result, tuple) else 'N/A'}"
                         )
                         raise TypeError(error_message)
-                elif not has_same_unit(result, expected_result):
-                    error_message = (
-                        "The return value of function "
-                        f"'{f.__name__}' was expected to have "
-                        f"unit {get_unit(expected_result)} but was "
-                        f"'{result}'"
-                    )
-                    raise UnitMismatchError(error_message, get_unit(result))
+                    for res, exp_res in zip(result, expected_result):
+                        if not has_same_unit(res, exp_res):
+                            error_message = (
+                                "The return value of function "
+                                f"'{f.__name__}' was expected to have "
+                                f"unit {get_unit(exp_res)} but was "
+                                f"'{res}'"
+                            )
+                            raise UnitMismatchError(error_message, get_unit(res))
+                else:
+                    if au["result"] == bool:
+                        if not isinstance(result, bool):
+                            error_message = (
+                                "The return value of function "
+                                f"'{f.__name__}' was expected to be "
+                                "a boolean value, but was of type "
+                                f"{type(result)}"
+                            )
+                            raise TypeError(error_message)
+                    elif not has_same_unit(result, expected_result):
+                        error_message = (
+                            "The return value of function "
+                            f"'{f.__name__}' was expected to have "
+                            f"unit {get_unit(expected_result)} but was "
+                            f"'{result}'"
+                        )
+                        raise UnitMismatchError(error_message, get_unit(result))
             return result
 
         new_f._orig_func = f
