@@ -2409,6 +2409,10 @@ class Quantity:
     @property
     def T(self) -> 'Quantity':
         return Quantity(jnp.asarray(self.mantissa).T, unit=self.unit)
+    
+    @property
+    def mT(self) -> 'Quantity':
+        return Quantity(jnp.asarray(self.mantissa).mT, unit=self.unit)
 
     @property
     def isreal(self) -> jax.Array:
