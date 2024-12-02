@@ -6,7 +6,6 @@ import jax
 from jax import lax, Array
 
 from brainunit.lax._lax_change_unit import unit_change
-from .. import Quantity
 from .._base import Quantity, maybe_decimal, fail_for_unit_mismatch
 from .._misc import set_module_as
 from ..math._fun_change_unit import _fun_change_unit_unary

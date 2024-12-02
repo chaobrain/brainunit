@@ -20,7 +20,7 @@ from typing import Union
 import jax
 import jax.numpy as jnp
 
-from .. import Quantity, maybe_decimal, UNITLESS
+from .._base import Quantity, maybe_decimal, UNITLESS
 from .._misc import set_module_as
 from ..math._fun_change_unit import (
     dot, multi_dot, vdot, vecdot, inner,
