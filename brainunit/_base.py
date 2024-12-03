@@ -4492,6 +4492,12 @@ def handle_units(**au):
                     newkeyset[n] = v
 
             result = f(**newkeyset)
+            if isinstance(result, tuple):
+                assert isinstance(au["result"], tuple), "The return value of the function is a tuple, but the decorator expected a single unit."
+                result = tuple(
+                    Quantity(r, unit=au["result"][i]) if isinstance(au["result"][i], Unit) else r
+                    for i, r in enumerate(result)
+                )
             if "result" in au:
                 specific_unit = au["result"]
                 if specific_unit == bool:

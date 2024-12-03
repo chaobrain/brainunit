@@ -1367,6 +1367,16 @@ class TestHelperFunctions(unittest.TestCase):
         with pytest.raises(TypeError):
             c_function(1 * mV, 1)
 
+        # Multiple results
+        @u.handle_units(result=(second, volt))
+        def d_function():
+            return 5, 3
+
+        # Should work (returns second)
+        assert d_function()[0] == 5 * second
+        assert d_function()[1] == 3 * volt
+
+
 
 def test_str_repr():
     """
