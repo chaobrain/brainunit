@@ -1316,6 +1316,57 @@ class TestHelperFunctions(unittest.TestCase):
         with pytest.raises(TypeError):
             c_function(False, 1)
 
+    def test_handle_units(self):
+        """
+        Test the handle_units decorator
+        """
+
+        @u.handle_units(v=volt)
+        def a_function(v, x):
+            """
+            v has to have units of volt, x can have any (or no) unit.
+            """
+            return v
+
+        # Try correct units
+        assert a_function(3 * mV, 5 * second) == (3 * mV).to_decimal(volt)
+        assert a_function(3 * volt, 5 * second) == (3 * volt).to_decimal(volt)
+        assert a_function(5 * volt, "something") == (5 * volt).to_decimal(volt)
+        assert_quantity(a_function([1, 2, 3] * volt, None), ([1, 2, 3] * volt).to_decimal(volt))
+
+        # Try incorrect units
+        with pytest.raises(u.UnitMismatchError):
+            a_function(5 * second, None)
+        with pytest.raises(u.UnitMismatchError):
+            a_function(5, None)
+        with pytest.raises(u.UnitMismatchError):
+            a_function(object(), None)
+
+        @u.handle_units(result=second)
+        def b_function():
+            """
+            Return a value in seconds if return_second is True, otherwise return
+            a value in volt.
+            """
+            return 5 * second
+
+        # Should work (returns second)
+        assert b_function() == 5 * second
+
+        @u.handle_units(a=bool, b=1, result=bool)
+        def c_function(a, b):
+            if a:
+                return b > 0
+            else:
+                return b
+
+        assert c_function(True, 1)
+        assert not c_function(True, -1)
+        with pytest.raises(TypeError):
+            c_function(1, 1)
+        with pytest.raises(TypeError):
+            c_function(1 * mV, 1)
+
 
 def test_str_repr():
     """

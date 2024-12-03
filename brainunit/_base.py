@@ -55,6 +55,7 @@ __all__ = [
     # functions for checking
     'check_dims',
     'check_units',
+    'handle_units',
     'fail_for_dimension_mismatch',
     'fail_for_unit_mismatch',
     'assert_quantity',
@@ -4441,3 +4442,46 @@ def check_units(**au):
         return new_f
 
     return do_check_units
+
+
+@set_module_as('brainunit')
+def handle_units(**au):
+    """
+    Decorator to transform units of arguments passed to a function
+    """
+
+    def do_handle_units(f):
+        @wraps(f)
+        def new_f(*args, **kwds):
+            newkeyset = kwds.copy()
+            arg_names = f.__code__.co_varnames[0: f.__code__.co_argcount]
+            for n, v in zip(arg_names, args[0: f.__code__.co_argcount]):
+                if n in au and v is not None:
+                    specific_unit = au[n]
+                    if isinstance(specific_unit, bool) or specific_unit == 1:
+                        if isinstance(v, bool):
+                            newkeyset[n] = v
+                        elif isinstance(v, Quantity):
+                            newkeyset[n] = v.to_decimal()
+                        elif isinstance(v, jax.typing.ArrayLike):
+                            newkeyset[n] = jnp.asarray(v)
+                    if isinstance(v, Quantity):
+                        v = v.to_decimal(specific_unit)
+                        newkeyset[n] = v
+                    else:
+                        raise UnitMismatchError(
+                            f"Function '{f.__name__}' expected a Quantity object for argument '{n}' but got '{v}'"
+                        )
+                else:
+                    newkeyset[n] = v
+
+            result = f(**newkeyset)
+            if "result" in au:
+                specific_unit = au["result"]
+                if isinstance(result, Quantity):
+                    result = Quantity(result, unit=specific_unit)
+            return result
+
+        return new_f
+
+    return do_handle_units
