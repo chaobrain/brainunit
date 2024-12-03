@@ -1337,9 +1337,9 @@ class TestHelperFunctions(unittest.TestCase):
         # Try incorrect units
         with pytest.raises(u.UnitMismatchError):
             a_function(5 * second, None)
-        with pytest.raises(u.UnitMismatchError):
+        with pytest.raises(TypeError):
             a_function(5, None)
-        with pytest.raises(u.UnitMismatchError):
+        with pytest.raises(TypeError):
             a_function(object(), None)
 
         @u.handle_units(result=second)

@@ -4458,19 +4458,35 @@ def handle_units(**au):
             for n, v in zip(arg_names, args[0: f.__code__.co_argcount]):
                 if n in au and v is not None:
                     specific_unit = au[n]
-                    if isinstance(specific_unit, bool) or specific_unit == 1:
+                    # if the specific unit is a boolean, just check and return
+                    if specific_unit == bool:
                         if isinstance(v, bool):
                             newkeyset[n] = v
-                        elif isinstance(v, Quantity):
+                        else:
+                            raise TypeError(f"Function '{f.__name__}' expected a boolean value for argument '{n}' but got '{v}'")
+
+                    elif specific_unit == 1:
+                        if isinstance(v, Quantity):
                             newkeyset[n] = v.to_decimal()
                         elif isinstance(v, jax.typing.ArrayLike):
-                            newkeyset[n] = jnp.asarray(v)
-                    if isinstance(v, Quantity):
-                        v = v.to_decimal(specific_unit)
-                        newkeyset[n] = v
+                            newkeyset[n] = v
+                        else:
+                            specific_unit = jax.typing.ArrayLike
+                            raise TypeError(f"Function '{f.__name__}' expected a unitless Quantity object"
+                                            f"or {specific_unit} for argument '{n}' but got '{v}'")
+
+                    elif isinstance(specific_unit, Unit):
+                        if isinstance(v, Quantity):
+                            v = v.to_decimal(specific_unit)
+                            newkeyset[n] = v
+                        else:
+                            raise TypeError(
+                                f"Function '{f.__name__}' expected a Quantity object for argument '{n}' but got '{v}'"
+                            )
                     else:
-                        raise UnitMismatchError(
-                            f"Function '{f.__name__}' expected a Quantity object for argument '{n}' but got '{v}'"
+                        raise TypeError(
+                            f"Function '{f.__name__}' expected a target unit object or"
+                            f" a Number, boolean object for checking, but got '{specific_unit}'"
                         )
                 else:
                     newkeyset[n] = v
@@ -4478,7 +4494,21 @@ def handle_units(**au):
             result = f(**newkeyset)
             if "result" in au:
                 specific_unit = au["result"]
-                if isinstance(result, Quantity):
+                if specific_unit == bool:
+                    if isinstance(result, bool):
+                        pass
+                    else:
+                        raise TypeError(f"Function '{f.__name__}' expected a boolean value for the return value but got '{result}'")
+                elif specific_unit == 1:
+                    if isinstance(result, Quantity):
+                        result = result.to_decimal()
+                    elif isinstance(result, jax.typing.ArrayLike):
+                        result = jnp.asarray(result)
+                    else:
+                        specific_unit = jax.typing.ArrayLike
+                        raise TypeError(f"Function '{f.__name__}' expected a unitless Quantity object"
+                                        f" or {specific_unit} for the return value but got '{result}'")
+                elif isinstance(specific_unit, Unit):
                     result = Quantity(result, unit=specific_unit)
             return result
 
