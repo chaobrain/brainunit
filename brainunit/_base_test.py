@@ -1395,12 +1395,12 @@ class TestHelperFunctions(unittest.TestCase):
         with pytest.raises(u.UnitMismatchError):
             d_function2(2)
 
-    def test_handle_units(self):
+    def test_assign_units(self):
         """
-        Test the handle_units decorator
+        Test the assign_units decorator
         """
 
-        @u.handle_units(v=volt)
+        @u.assign_units(v=volt)
         def a_function(v, x):
             """
             v has to have units of volt, x can have any (or no) unit.
@@ -1421,7 +1421,7 @@ class TestHelperFunctions(unittest.TestCase):
         with pytest.raises(TypeError):
             a_function(object(), None)
 
-        @u.handle_units(result=second)
+        @u.assign_units(result=second)
         def b_function():
             """
             Return a value in seconds if return_second is True, otherwise return
@@ -1432,7 +1432,7 @@ class TestHelperFunctions(unittest.TestCase):
         # Should work (returns second)
         assert b_function() == 5 * second
 
-        @u.handle_units(a=bool, b=1, result=bool)
+        @u.assign_units(a=bool, b=1, result=bool)
         def c_function(a, b):
             if a:
                 return b > 0
@@ -1447,13 +1447,33 @@ class TestHelperFunctions(unittest.TestCase):
             c_function(1 * mV, 1)
 
         # Multiple results
-        @u.handle_units(result=(second, volt))
+        @u.assign_units(result=(second, volt))
         def d_function():
             return 5, 3
 
         # Should work (returns second)
         assert d_function()[0] == 5 * second
         assert d_function()[1] == 3 * volt
+
+        # Multiple results
+        @u.assign_units(result={'u': second, 'v': (volt, metre)})
+        def d_function2(true_result):
+            """
+            Return a value in seconds if return_second is True, otherwise return
+            a value in volt.
+            """
+            if true_result == 0:
+                return {'u': 5, 'v': (3, 2)}
+            elif true_result == 1:
+                return 3, 5
+            else:
+                return 3, 5
+
+        # Should work (returns dict)
+        d_function2(0)
+        # Should fail (returns tuple)
+        with pytest.raises(TypeError):
+            d_function2(1)
 
 
 

@@ -55,7 +55,7 @@ __all__ = [
     # functions for checking
     'check_dims',
     'check_units',
-    'handle_units',
+    'assign_units',
     'fail_for_dimension_mismatch',
     'fail_for_unit_mismatch',
     'assert_quantity',
@@ -4455,12 +4455,12 @@ def check_units(**au):
 
 
 @set_module_as('brainunit')
-def handle_units(**au):
+def assign_units(**au):
     """
     Decorator to transform units of arguments passed to a function
     """
 
-    def do_handle_units(f):
+    def do_assign_units(f):
         @wraps(f)
         def new_f(*args, **kwds):
             newkeyset = kwds.copy()
@@ -4530,7 +4530,7 @@ def handle_units(**au):
 
         return new_f
 
-    return do_handle_units
+    return do_assign_units
 
 def _check_unit(f, val, unit):
     unit = UNITLESS if unit is None else unit
