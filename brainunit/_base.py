@@ -19,7 +19,7 @@ import numbers
 import operator
 from contextlib import contextmanager
 from copy import deepcopy
-from functools import wraps
+from functools import wraps, partial
 from typing import Union, Optional, Sequence, Callable, Tuple, Any, List, Dict
 
 import jax
@@ -4442,6 +4442,22 @@ def check_units(**au):
         return new_f
 
     return do_check_units
+
+
+def _check_unit(f, val, unit):
+    unit = UNITLESS if unit is None else unit
+    if not has_same_unit(val, unit):
+        error_message = (
+            "The return value of function "
+            f"'{f.__name__}' was expected to have "
+            f"unit {get_unit(val)} but was "
+            f"'{val}'"
+        )
+        raise UnitMismatchError(error_message, get_unit(val))
+
+
+def _is_quantity(x):
+    return isinstance(x, Quantity)
 
 
 @set_module_as('brainunit')
