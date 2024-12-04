@@ -1427,7 +1427,7 @@ class TestHelperFunctions(unittest.TestCase):
             Return a value in seconds if return_second is True, otherwise return
             a value in volt.
             """
-            return 5 * second
+            return 5
 
         # Should work (returns second)
         assert b_function() == 5 * second
