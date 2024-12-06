@@ -52,9 +52,9 @@ class TestFftChangeUnit(parameterized.TestCase):
 
     def test_time_freq_map(self):
         from brainunit.fft._fft_change_unit import _time_freq_map
-        for key, value in _time_freq_map.items():
+        for v1, v2 in _time_freq_map.values():
             # print(key.scale, value.scale)
-            assert key.scale == -value.scale
+            assert v1.scale == -v2.scale
 
     @parameterized.product(
         value_axis=[
@@ -169,17 +169,11 @@ class TestFftChangeUnit(parameterized.TestCase):
                 q = d * meter
                 result = bufft_fun(size, q)
 
-            with pytest.raises(AssertionError):
-                q = d * second
-                result = bufft_fun(size, q, target_freq_unit=u.meter)
 
-            custom_time_unit = Unit.create(get_or_create_dimension(s=1), "custom_second", "cs")
+            custom_time_unit = Unit.create(get_or_create_dimension(s=1), "custom_second", "cs", scale=100)
+            custom_hertz_unit = Unit.create(get_or_create_dimension(s=-1), "custom_hertz", "ch", scale=-100)
 
             q = d * custom_time_unit
-            result = bufft_fun(size, q, target_freq_unit=u.hertz)
+            result = bufft_fun(size, q)
             expected = jnpfft_fun(size, d)
-            assert_quantity(result, expected, unit=u.hertz)
-
-            with pytest.raises(TypeError):
-                q = d * custom_time_unit
-                result = bufft_fun(size, q)
+            assert_quantity(result, expected, unit=custom_hertz_unit)
