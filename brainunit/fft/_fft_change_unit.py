@@ -17,15 +17,15 @@ from __future__ import annotations
 from typing import Callable, Union, Sequence
 
 import jax
-from jaxlib import xla_client
 import jax.numpy as jnp
 from jax.numpy import fft as jnpfft
+from jaxlib import xla_client
 
-from .._base import Quantity, maybe_decimal, UNITLESS, Unit
 from .. import _unit_common as u
-from .._unit_common import second, hertz
+from .._base import Quantity, Unit
 from .._misc import set_module_as
-from ..math._fun_change_unit import _fun_change_unit_unary, _fun_change_unit_binary
+from .._unit_common import second
+from ..math._fun_change_unit import _fun_change_unit_unary
 
 __all__ = [
     # return original unit * time unit
@@ -40,6 +40,7 @@ __all__ = [
     'fftfreq', 'rfftfreq',
 ]
 
+
 def unit_change(
     unit_change_fun: Callable
 ):
@@ -49,12 +50,14 @@ def unit_change(
 
     return actual_decorator
 
+
 Shape = Sequence[int]
+
 
 # return original unit * time unit
 # --------------------------------
 
-def _calculate_fftn_dimension(input_dim: int, axes:Sequence[int] | None = None) -> int:
+def _calculate_fftn_dimension(input_dim: int, axes: Sequence[int] | None = None) -> int:
     if axes is None:
         return input_dim
     return len(axes)
@@ -129,6 +132,7 @@ def fft(
                                   lambda u: u * second,
                                   a, n=n, axis=axis, norm=norm)
 
+
 @unit_change(lambda u: u * second)
 def rfft(
     a: Union[Quantity, jax.typing.ArrayLike],
@@ -195,6 +199,7 @@ def rfft(
                                   lambda u: u * second,
                                   a, n=n, axis=axis, norm=norm)
 
+
 # return original unit / time unit (inverse)
 # ------------------------------------------
 
@@ -257,8 +262,9 @@ def ifft(
          [ 0.67-0.58j -0.5 -1.44j  0.17-2.02j  1.83-0.29j]]
     """
     return _fun_change_unit_unary(jnpfft.ifft,
-                                    lambda u: u / second,
-                                    a, n=n, axis=axis, norm=norm)
+                                  lambda u: u / second,
+                                  a, n=n, axis=axis, norm=norm)
+
 
 @unit_change(lambda u: u / second)
 def irfft(
@@ -324,6 +330,7 @@ def irfft(
     return _fun_change_unit_unary(jnpfft.irfft,
                                   lambda u: u / second,
                                   a, n=n, axis=axis, norm=norm)
+
 
 # return original unit * (time unit ^ n)
 # --------------------------------------
@@ -409,8 +416,9 @@ def fft2(
         Array(True, dtype=bool)
     """
     return _fun_change_unit_unary(jnpfft.fft2,
-                                    lambda u: u * (second ** 2),
-                                    a, s=s, axes=axes, norm=norm)
+                                  lambda u: u * (second ** 2),
+                                  a, s=s, axes=axes, norm=norm)
+
 
 @unit_change(lambda u: u * (second ** 2))
 def rfft2(
@@ -493,8 +501,9 @@ def rfft2(
                 [  3.19 +1.63j,   4.4  +1.38j,   5.61 +1.12j]]], dtype=complex64)
     """
     return _fun_change_unit_unary(jnpfft.rfft2,
-                                    lambda u: u * (second ** 2),
-                                    a, s=s, axes=axes, norm=norm)
+                                  lambda u: u * (second ** 2),
+                                  a, s=s, axes=axes, norm=norm)
+
 
 @set_module_as('brainunit.fft')
 def fftn(
@@ -576,8 +585,9 @@ def fftn(
     # TODO: may cause computation overhead?
     fftn._unit_change_fun = _unit_change_fun
     return _fun_change_unit_unary(jnpfft.fftn,
-                                    _unit_change_fun,
-                                    a, s=s, axes=axes, norm=norm)
+                                  _unit_change_fun,
+                                  a, s=s, axes=axes, norm=norm)
+
 
 @set_module_as('brainunit.fft')
 def rfftn(
@@ -676,9 +686,8 @@ def rfftn(
     # TODO: may cause computation overhead?
     rfftn._unit_change_fun = _unit_change_fun
     return _fun_change_unit_unary(jnpfft.rfftn,
-                                    _unit_change_fun,
-                                    a, s=s, axes=axes, norm=norm)
-
+                                  _unit_change_fun,
+                                  a, s=s, axes=axes, norm=norm)
 
 
 # return original unit / (time unit ^ n) (inverse)
@@ -758,8 +767,9 @@ def ifft2(
                 [-0.33+0.58j, -0.33+0.58j]]], dtype=complex64)
     """
     return _fun_change_unit_unary(jnpfft.ifft2,
-                                    lambda u: u / (second ** 2),
-                                    a, s=s, axes=axes, norm=norm)
+                                  lambda u: u / (second ** 2),
+                                  a, s=s, axes=axes, norm=norm)
+
 
 @unit_change(lambda u: u / (second ** 2))
 def irfft2(
@@ -838,8 +848,8 @@ def irfft2(
                 [ 0.  ,  0.  ,  0.  ]]], dtype=float32)
     """
     return _fun_change_unit_unary(jnpfft.irfft2,
-                                    lambda u: u / (second ** 2),
-                                    a, s=s, axes=axes, norm=norm)
+                                  lambda u: u / (second ** 2),
+                                  a, s=s, axes=axes, norm=norm)
 
 
 @set_module_as('brainunit.fft')
@@ -916,8 +926,9 @@ def ifftn(
     # TODO: may cause computation overhead?
     ifftn._unit_change_fun = _unit_change_fun
     return _fun_change_unit_unary(jnpfft.ifftn,
-                                    _unit_change_fun,
-                                    a, s=s, axes=axes, norm=norm)
+                                  _unit_change_fun,
+                                  a, s=s, axes=axes, norm=norm)
+
 
 @set_module_as('brainunit.fft')
 def irfftn(
@@ -1002,8 +1013,9 @@ def irfftn(
     # TODO: may cause computation overhead?
     irfftn._unit_change_fun = _unit_change_fun
     return _fun_change_unit_unary(jnpfft.irfftn,
-                                    _unit_change_fun,
-                                    a, s=s, axes=axes, norm=norm)
+                                  _unit_change_fun,
+                                  a, s=s, axes=axes, norm=norm)
+
 
 # return frequency unit
 # ---------------------
@@ -1031,6 +1043,7 @@ _time_freq_map = {
     u.Zsecond: u.zhertz,
     u.Ysecond: u.yhertz,
 }
+
 
 @set_module_as('brainunit.fft')
 def fftfreq(
@@ -1070,9 +1083,11 @@ def fftfreq(
             try:
                 return Quantity(jnpfft.fftfreq(n, d.mantissa, dtype=dtype, device=device), unit=_time_freq_map[d.unit])
             except:
-                raise TypeError(f"Cannot convert {d.unit} to common frequency unit, please specify the target frequency unit"
-                                f"by passing the `target_freq_unit` argument.")
+                raise TypeError(
+                    f"Cannot convert {d.unit} to common frequency unit, please specify the target frequency unit"
+                    f"by passing the `target_freq_unit` argument.")
     return jnpfft.fftfreq(n, d, dtype=dtype, device=device)
+
 
 @set_module_as('brainunit.fft')
 def rfftfreq(
@@ -1117,4 +1132,3 @@ def rfftfreq(
                     f"Cannot convert {d.unit} to common frequency unit, please specify the target frequency unit"
                     f"by passing the `target_freq_unit` argument.")
     return jnpfft.rfftfreq(n, d, dtype=dtype, device=device)
-

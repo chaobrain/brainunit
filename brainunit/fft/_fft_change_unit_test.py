@@ -14,17 +14,14 @@
 # ==============================================================================
 
 
-import itertools
-
 import jax.numpy as jnp
 import jax.numpy.fft as jnpfft
-import numpy as np
 import pytest
 from absl.testing import parameterized
 
 import brainunit as u
 import brainunit.fft as ufft
-from brainunit import meter, second, volt
+from brainunit import meter, second
 from brainunit._base import assert_quantity, Unit, get_or_create_dimension
 
 fft_change_1d = [

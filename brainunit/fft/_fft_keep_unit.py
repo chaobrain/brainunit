@@ -14,18 +14,14 @@
 # ==============================================================================
 from __future__ import annotations
 
-import builtins
-from typing import Union, Sequence, Callable
+from typing import Union, Sequence
 
 import jax
-import numpy as np
-import jax.numpy as jnp
 from jax.numpy import fft as jnpfft
-from jax._src.typing import Shape
 
-from .._base import Quantity, maybe_decimal
+from .._base import Quantity
 from .._misc import set_module_as
-from ..math._fun_keep_unit import _fun_keep_unit_unary, _fun_keep_unit_binary
+from ..math._fun_keep_unit import _fun_keep_unit_unary
 
 __all__ = [
     # keep unit
@@ -35,7 +31,6 @@ __all__ = [
 # keep unit
 # ---------
 
-jnpfft.fftshift
 
 @set_module_as('brainunit.fft')
 def fftshift(
@@ -77,6 +72,7 @@ def fftshift(
         Array([ 0. ,  0.2,  0.4, -0.4, -0.2], dtype=float32)
     """
     return _fun_keep_unit_unary(jnpfft.fftshift, x, axes=axes)
+
 
 @set_module_as('brainunit.fft')
 def ifftshift(
