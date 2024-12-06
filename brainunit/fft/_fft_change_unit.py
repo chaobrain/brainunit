@@ -54,6 +54,11 @@ Shape = Sequence[int]
 # return original unit * time unit
 # --------------------------------
 
+def _calculate_fftn_dimension(input_dim: int, axes:Sequence[int] | None = None) -> int:
+    if axes is None:
+        return input_dim
+    return len(axes)
+
 
 @unit_change(lambda u: u * second)
 def fft(
@@ -323,8 +328,6 @@ def irfft(
 # return original unit * (time unit ^ n)
 # --------------------------------------
 
-jnpfft.fft2
-
 @unit_change(lambda u: u * (second ** 2))
 def fft2(
     a: Union[Quantity, jax.typing.ArrayLike],
@@ -493,11 +496,6 @@ def rfft2(
                                     lambda u: u * (second ** 2),
                                     a, s=s, axes=axes, norm=norm)
 
-def _calculate_fftn_dimension(input_dim: int, axes:Sequence[int] | None = None) -> int:
-    if axes is None:
-        return input_dim
-    return len(axes)
-
 @set_module_as('brainunit.fft')
 def fftn(
     a: Union[Quantity, jax.typing.ArrayLike],
@@ -575,6 +573,7 @@ def fftn(
     """
     n = _calculate_fftn_dimension(a.ndim, axes)
     _unit_change_fun = lambda u: u * (second ** n)
+    # TODO: may cause computation overhead?
     fftn._unit_change_fun = _unit_change_fun
     return _fun_change_unit_unary(jnpfft.fftn,
                                     _unit_change_fun,
@@ -674,6 +673,7 @@ def rfftn(
     """
     n = _calculate_fftn_dimension(a.ndim, axes)
     _unit_change_fun = lambda u: u * (second ** n)
+    # TODO: may cause computation overhead?
     rfftn._unit_change_fun = _unit_change_fun
     return _fun_change_unit_unary(jnpfft.rfftn,
                                     _unit_change_fun,
@@ -913,6 +913,7 @@ def ifftn(
     """
     n = _calculate_fftn_dimension(a.ndim, axes)
     _unit_change_fun = lambda u: u / (second ** n)
+    # TODO: may cause computation overhead?
     ifftn._unit_change_fun = _unit_change_fun
     return _fun_change_unit_unary(jnpfft.ifftn,
                                     _unit_change_fun,
@@ -998,6 +999,7 @@ def irfftn(
     """
     n = _calculate_fftn_dimension(a.ndim, axes)
     _unit_change_fun = lambda u: u / (second ** n)
+    # TODO: may cause computation overhead?
     irfftn._unit_change_fun = _unit_change_fun
     return _fun_change_unit_unary(jnpfft.irfftn,
                                     _unit_change_fun,
