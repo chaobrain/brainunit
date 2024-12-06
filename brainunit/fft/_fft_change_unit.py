@@ -14,7 +14,6 @@
 # ==============================================================================
 from __future__ import annotations
 
-import sys
 from typing import Callable, Union, Sequence
 
 import jax
@@ -1046,6 +1045,7 @@ _time_freq_map = {
     24: (u.Ysecond, u.yhertz),
 }
 
+
 def _find_closet_scale(scale):
     values = list(_time_freq_map.keys())
 
@@ -1100,7 +1100,7 @@ def fftfreq(
             freq_unit = Unit.create(get_or_create_dimension(s=-1),
                                     name=f'10^{freq_unit_scale} hertz',
                                     dispname=f'10^{freq_unit_scale} Hz',
-                                    scale=freq_unit_scale,)
+                                    scale=freq_unit_scale, )
         try:
             return Quantity(jnpfft.fftfreq(n, d.to_decimal(time_unit), dtype=dtype, device=device), unit=freq_unit)
         except:
@@ -1109,7 +1109,6 @@ def fftfreq(
         return jnpfft.fftfreq(n, d, dtype=dtype, device=device)
     except:
         return jnpfft.fftfreq(n, d, dtype=dtype)
-
 
 
 @set_module_as('brainunit.fft')
