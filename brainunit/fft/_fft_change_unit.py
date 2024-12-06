@@ -1104,10 +1104,12 @@ def fftfreq(
         if sys.version_info >= (3, 10):
             return Quantity(jnpfft.fftfreq(n, d.to_decimal(time_unit), dtype=dtype, device=device), unit=freq_unit)
         else:
+            # noinspection PyUnresolvedReferences
             return Quantity(jnpfft.fftfreq(n, d.to_decimal(time_unit), dtype=dtype), unit=freq_unit)
     if sys.version_info >= (3, 10):
         return jnpfft.fftfreq(n, d, dtype=dtype, device=device)
     else:
+        # noinspection PyUnresolvedReferences
         return jnpfft.fftfreq(n, d, dtype=dtype)
 
 
@@ -1156,8 +1158,10 @@ def rfftfreq(
         if sys.version_info >= (3, 10):
             return Quantity(jnpfft.rfftfreq(n, d.to_decimal(time_unit), dtype=dtype, device=device), unit=freq_unit)
         else:
+            # noinspection PyUnresolvedReferences
             return Quantity(jnpfft.rfftfreq(n, d.to_decimal(time_unit), dtype=dtype), unit=freq_unit)
     if sys.version_info >= (3, 10):
         return jnpfft.rfftfreq(n, d, dtype=dtype, device=device)
     else:
+        # noinspection PyUnresolvedReferences
         return jnpfft.rfftfreq(n, d, dtype=dtype)
