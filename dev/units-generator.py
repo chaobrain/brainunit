@@ -127,7 +127,7 @@ modular_dynamics_units = [
   'eV', 'Angstrom', 'AMU', 'IMF'
 ]
 
-all_units = all_units + modular_dynamics_units
+# all_units = all_units + modular_dynamics_units
 
 
 # Add unit names to __all__

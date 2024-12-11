@@ -2094,10 +2094,6 @@ __all__ = [
     "Elitre",
     "Zlitre",
     "Ylitre",
-    "eV",
-    "Angstrom",
-    "AMU",
-    "IMF",
     ]
 
 
@@ -5855,10 +5851,6 @@ additional_units = [
     yliter, zliter, aliter, fliter, pliter, nliter, uliter, mliter, cliter, dliter, liter, daliter, hliter, kliter, Mliter, Gliter, Tliter, Pliter, Eliter, Zliter, Yliter, ylitre, zlitre, alitre, flitre, plitre, nlitre, ulitre, mlitre, clitre, dlitre, litre, dalitre, hlitre, klitre, Mlitre, Glitre, Tlitre, Plitre, Elitre, Zlitre, Ylitre, ]
 
 all_units = [
-    IMF,
-    AMU,
-    Angstrom,
-    eV,
     Ylitre,
     Zlitre,
     Elitre,
