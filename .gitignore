@@ -220,3 +220,8 @@ cython_debug/
 /my_tests/
 /examples/dynamics_simulation/Joglekar_2018_data/
 /docs/apis/deprecated/generated/
+/docs/apis/brainunit.fft.rst
+/docs/apis/brainunit.lax.rst
+/docs/apis/brainunit.linalg.rst
+/docs/apis/brainunit.math.rst
+/docs/apis/changelog.md
