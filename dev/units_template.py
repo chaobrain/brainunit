@@ -54,18 +54,6 @@ fundamental_units = [metre, meter, gram, second, amp, kelvin, mole, candle]
 {derived}
 
 
-### UNITS in modular dynamics
-# See https://github.com/chaobrain/brainunit/issues/63
-
-eV = Unit.create(joule.dim, name="electronvolt", dispname="eV", scale=-19, factor=1.602176565)
-Angstrom = Unit.create(meter.dim, name="Angstrom", dispname="Å", scale=-10, factor=1.0)
-# atomic mass unit (amu)
-AMU = Unit.create(kilogram.dim, name="atomic mass unit", dispname="AMU", scale=-27, factor=1.66053886)
-# Intermolecular force 分子间作用力
-IMF = Unit.create(eV.dim / Angstrom.dim, name="intermolecular force", dispname="IMF", scale=-9, factor=1.602176565)
-
-
-
 # Difinitions of base units
 
 {definitions}

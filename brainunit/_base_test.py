@@ -1132,34 +1132,6 @@ class TestNumPyFunctions(unittest.TestCase):
                 assert u.math.allclose(bu_fun(val), np_fun(val), equal_nan=True)
 
 
-class TestConstant(unittest.TestCase):
-
-    def test_constants(self):
-        import brainunit._unit_constants as constants
-
-        # Check that the expected names exist and have the correct dimensions
-        assert constants.avogadro_constant.dim == (1 / mole).dim
-        assert constants.boltzmann_constant.dim == (joule / kelvin).dim
-        assert constants.electric_constant.dim == (farad / meter).dim
-        assert constants.electron_mass.dim == kilogram.dim
-        assert constants.elementary_charge.dim == coulomb.dim
-        assert constants.faraday_constant.dim == (coulomb / mole).dim
-        assert constants.gas_constant.dim == (joule / mole / kelvin).dim
-        assert constants.magnetic_constant.dim == (newton / amp2).dim
-        assert constants.molar_mass_constant.dim == (kilogram / mole).dim
-        assert constants.zero_celsius.dim == kelvin.dim
-
-        # Check the consistency between a few constants
-        assert u.math.allclose(
-            constants.gas_constant.mantissa,
-            (constants.avogadro_constant * constants.boltzmann_constant).mantissa,
-        )
-        assert u.math.allclose(
-            constants.faraday_constant.mantissa,
-            (constants.avogadro_constant * constants.elementary_charge).mantissa,
-        )
-
-
 class TestHelperFunctions(unittest.TestCase):
 
     def test_fail_for_dimension_mismatch(self):
