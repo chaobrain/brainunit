@@ -104,6 +104,10 @@ class TestUnit(unittest.TestCase):
         print(str(u.kmeter / u.meter))
         assert_equal(str(u.kmeter / u.meter), 'Unit(10.0^3)')
 
+    def test_unit_with_factor(self):
+        self.assertTrue(1. * u.eV / u.joule == 1.6021765e-19)
+        self.assertTrue(1. * u.joule / u.eV == 6.241509074460762e18)
+
 
 class TestQuantity(unittest.TestCase):
     def test_dim(self):

@@ -1534,12 +1534,32 @@ class Unit:
             "Please create a new Unit object with the dispname you want."
         )
 
-    def factorless(self):
+    def factorless(self) -> 'Unit':
+        """
+        Return a copy of this Unit with the factor set to 1.
+
+        Returns
+        -------
+        Unit
+            A new Unit object with the factor set to 1.
+        """
+        # using standard units
         key = (self.dim, self.scale, self.base, 1.)
         if key in _standard_units:
             return _standard_units[key]
-        else:
-            raise ValueError(f"Cannot find a factorless unit for {self}")
+
+        # using temporary units
+        name, is_fullname, dimless = _find_standard_unit(self.dim, self.base, self.scale, 1.0)
+        return Unit(
+            dim=self.dim,
+            scale=self.scale,
+            base=self.base,
+            factor=1.,
+            name=name,
+            dispname=name,
+            iscompound=self.iscompound,
+            is_fullname=is_fullname,
+        )
 
     def copy(self):
         """
@@ -2532,7 +2552,7 @@ class Quantity:
             The Quantity object without the factor.
         """
         if self.unit.factor != 1.0:
-            return Quantity(self.mantissa / self.unit.factor, unit=self.unit.factorless())
+            return Quantity(self.mantissa * self.unit.factor, unit=self.unit.factorless())
         else:
             return self
 
