@@ -74,6 +74,13 @@ compat_with_equinox = False
 
 
 def compatible_with_equinox(mode: bool = True):
+    """
+    This function is developed to set the compatibility with equinox.
+    See `unit-aware diffrax <https://github.com/chaoming0625/diffrax>`_.
+
+    Args:
+        mode: bool, optional. The mode to set the compatibility with equinox.
+    """
     global compat_with_equinox
     compat_with_equinox = mode
 
@@ -1201,23 +1208,9 @@ def _assert_same_base(u1, u2):
                                   f"But we got {u1.base} != {u1.base}.")
 
 
-def _find_base_unit(dim: Dimension, base, scale) -> Tuple[Optional[str], bool]:
-    if dim == DIMENSIONLESS:
-        u_name = f"Unit({base}^{scale})"
-        return u_name, False
-    if isinstance(base, (int, float)):
-        key = (dim, 0, base)
-        if key in _standard_units:
-            u_name = _standard_units[key].name
-            if _is_tracer(scale):
-                return u_name, False
-
-    return None, False
-
-
-def _find_standard_unit(dim: Dimension, base, scale) -> Tuple[Optional[str], bool, bool]:
+def _find_standard_unit(dim: Dimension, base, scale, factor) -> Tuple[Optional[str], bool, bool]:
     """
-
+    Find a standard unit for the given dimension, base, scale, and factor.
 
     :param dim:
     :param base:
@@ -1228,29 +1221,42 @@ def _find_standard_unit(dim: Dimension, base, scale) -> Tuple[Optional[str], boo
         return None, False, True
     if isinstance(base, (int, float)):
         if isinstance(scale, (int, float)):
-            key = (dim, scale, base)
-            if key in _standard_units:
-                u_name = _standard_units[key].name
-                return u_name, True, False
-        key = (dim, 0, base)
+            if isinstance(factor, (int, float)):
+                key = (dim, scale, base, factor)
+                if key in _standard_units:
+                    u_name = _standard_units[key].name
+                    return u_name, True, False
+
+        key = (dim, 0, base, 1.0)
         if key in _standard_units:
             u_name = _standard_units[key].name
             return u_name, False, False
     return None, False, False
 
 
-def _find_a_name(dim: Dimension, base, scale) -> Tuple[Optional[str], bool]:
+def _find_a_name(dim: Dimension, base, scale, factor) -> Tuple[Optional[str], bool]:
     if dim == DIMENSIONLESS:
         u_name = f"Unit({base}^{scale})"
         return u_name, False
 
     if isinstance(base, (int, float)):
         if isinstance(scale, (int, float)):
-            key = (dim, scale, base)
+            if isinstance(factor, (int, float)):
+                key = (dim, scale, base, factor)
+                if key in _standard_units:
+                    u_name = _standard_units[key].name
+                    return u_name, True
+
+        if isinstance(factor, (int, float)):
+            key = (dim, 0, base, factor)
             if key in _standard_units:
                 u_name = _standard_units[key].name
-                return u_name, True
-        key = (dim, 0, base)
+                if factor == 1.:
+                    return f"{base}^{scale} * {u_name}", False
+                else:
+                    return f"{factor} * {base}^{scale} * {u_name}", False
+
+        key = (dim, 0, base, 1.)
         if key in _standard_units:
             u_name = _standard_units[key].name
             if _is_tracer(scale):
@@ -1264,10 +1270,12 @@ _standard_units: Dict[Tuple, 'Unit'] = {}
 
 
 def add_standard_unit(u: 'Unit'):
-    if isinstance(u.base, (int, float)) and isinstance(u.scale, (int, float)):
-        key = (u.dim, u.scale, u.base)
-        # if key in _standard_units:
-        #   raise ValueError(f"Unit {u} already exists: {_standard_units[key]}")
+    if (
+        isinstance(u.base, (int, float)) and
+        isinstance(u.scale, (int, float)) and
+        isinstance(u.factor, (int, float))
+    ):
+        key = (u.dim, u.scale, u.base, u.factor)
         _standard_units[key] = u
 
 
@@ -1373,7 +1381,7 @@ class Unit:
     """
 
     __module__ = "brainunit"
-    __slots__ = ["_dim", "_base", "_scale", "_dispname", "_name", "iscompound", "is_fullname"]
+    __slots__ = ["_dim", "_base", "_scale", "_factor", "_dispname", "_name", "iscompound", "is_fullname"]
     __array_priority__ = 1000
 
     def __init__(
@@ -1381,6 +1389,7 @@ class Unit:
         dim: Dimension = None,
         scale: jax.typing.ArrayLike = 0,
         base: jax.typing.ArrayLike = 10.,
+        factor: jax.typing.ArrayLike = 1.,
         name: str = None,
         dispname: str = None,
         iscompound: bool = False,
@@ -1394,6 +1403,11 @@ class Unit:
         # a scale of 3 means base^3, for a "k" prefix.
         self._scale = scale
 
+        # The factor for this unit (as the conversion factor), i.e.
+        # a factor of cal = 4.18400 means 1 cal = 4.18400 J, 
+        # where 4.18400 is the factor.
+        self._factor = factor
+
         # The physical unit dimensions of this unit
         if dim is None:
             dim = DIMENSIONLESS
@@ -1402,13 +1416,12 @@ class Unit:
 
         # The name of this unit
         if name is None:
+            is_fullname = False
             if dim == DIMENSIONLESS:
                 name = f"Unit({base}^{scale})"
-                is_fullname = False
             else:
                 name = dim.__repr__()
                 dispname = dim.__str__()
-                is_fullname = False
         self._name = name
 
         # The display name of this unit
@@ -1421,7 +1434,18 @@ class Unit:
         self.is_fullname = is_fullname
 
     @property
-    def base(self) -> jax.typing.ArrayLike:
+    def factor(self) -> float:
+        return self._factor
+
+    @factor.setter
+    def factor(self, factor):
+        raise NotImplementedError(
+            "Cannot set the factor of a Unit object directly,"
+            "Please create a new Unit object with the factor you want."
+        )
+
+    @property
+    def base(self) -> float:
         return self._base
 
     @base.setter
@@ -1432,7 +1456,7 @@ class Unit:
         )
 
     @property
-    def scale(self) -> jax.typing.ArrayLike:
+    def scale(self) -> float | int:
         return self._scale
 
     @scale.setter
@@ -1443,13 +1467,16 @@ class Unit:
         )
 
     @property
-    def value(self) -> jax.typing.ArrayLike:
-        # return the value
-        return self.base ** self._scale
+    def magnitude(self) -> float:
+        # magnitude = factor * base ** scale
+        # 量级 = 因子 * 基数 ** 指数
+        return self.factor * self.base ** self.scale
 
-    @value.setter
-    def value(self, value):
-        raise NotImplementedError("Cannot set the value of a Unit object.")
+    @magnitude.setter
+    def magnitude(self, scale):
+        raise NotImplementedError(
+            "Cannot set the magnitude of a Unit object."
+        )
 
     @property
     def dim(self) -> Dimension:
@@ -1483,12 +1510,26 @@ class Unit:
         """
         return self._name
 
+    @name.setter
+    def name(self, name):
+        raise NotImplementedError(
+            "Cannot set the name of a Unit object directly,"
+            "Please create a new Unit object with the name you want."
+        )
+
     @property
     def dispname(self):
         """
         The display name of the unit.
         """
         return self._dispname
+
+    @dispname.setter
+    def dispname(self, dispname):
+        raise NotImplementedError(
+            "Cannot set the dispname of a Unit object directly,"
+            "Please create a new Unit object with the dispname you want."
+        )
 
     def copy(self):
         """
@@ -1498,6 +1539,7 @@ class Unit:
             dim=self.dim,
             scale=self.scale,
             base=self.base,
+            factor=self.factor,
             name=self.name,
             dispname=self.dispname,
             iscompound=self.iscompound,
@@ -1509,16 +1551,28 @@ class Unit:
             dim=self.dim.__deepcopy__(memodict),
             scale=deepcopy(self.scale),
             base=deepcopy(self.base),
-            name=self.name,
-            dispname=self.dispname,
-            iscompound=self.iscompound,
-            is_fullname=self.is_fullname,
+            factor=deepcopy(self.factor),
+            name=deepcopy(self.name),
+            dispname=deepcopy(self.dispname),
+            iscompound=deepcopy(self.iscompound),
+            is_fullname=deepcopy(self.is_fullname),
         )
 
     def __hash__(self):
-        return hash((self.dim, self.base, self.scale, self.name, self.dispname, self.iscompound, self.is_fullname))
+        return hash(
+            (
+                self.dim,
+                self.factor,
+                self.base,
+                self.scale,
+                self.name,
+                self.dispname,
+                self.iscompound,
+                self.is_fullname
+            )
+        )
 
-    def has_same_scale(self, other: 'Unit') -> bool:
+    def has_same_magnitude(self, other: 'Unit') -> bool:
         """
         Whether this Unit has the same ``scale`` as another Unit.
 
@@ -1532,7 +1586,7 @@ class Unit:
         bool
             Whether the two Units have the same scale.
         """
-        return self.scale == other.scale and self.base == other.base
+        return self.scale == other.scale and self.base == other.base and self.factor == other.factor
 
     def has_same_base(self, other: 'Unit') -> bool:
         """
@@ -1573,7 +1627,8 @@ class Unit:
         name: str,
         dispname: str,
         scale: int = 0,
-        base: float = 10.
+        base: float = 10.,
+        factor: float = 1.,
     ) -> 'Unit':
         """
         Create a new named unit.
@@ -1592,6 +1647,10 @@ class Unit:
         base: float, optional
             The base for this unit (as the base of the exponent), i.e.
             a base of 10 means 10^3, for a "k" prefix. Defaults to 10.
+        factor: float, optional
+            The factor for this unit (as the conversion factor), e.g.
+            a factor of 1 cal = 4.18400 J, where 4.18400 is the factor.
+            Defaults to 1.
 
         Returns
         -------
@@ -1602,6 +1661,7 @@ class Unit:
             dim=dim,
             scale=scale,
             base=base,
+            factor=factor,
             name=name,
             dispname=dispname,
             is_fullname=True,
@@ -1647,8 +1707,10 @@ class Unit:
         if self.dim.is_dimensionless:
             return f'Unit({self.base}^{self.scale})'
         else:
-            # return f'{self.base}^{self.scale} * {self.dim}'
-            return f'{self.base}^{self.scale} * {self.name}'
+            if self.factor == 1.:
+                return f'{self.base}^{self.scale} * {self.name}'
+            else:
+                return f'{self.factor} * {self.base}^{self.scale} * {self.name}'
 
     def __str__(self) -> str:
         if self.is_fullname:
@@ -1656,8 +1718,10 @@ class Unit:
         if self.dim.is_dimensionless:
             return f'Unit({self.base}^{self.scale})'
         else:
-            # return f'{self.base}^{self.scale} * {self.dim}'
-            return f'{self.base}^{self.scale} * {self.dispname}'
+            if self.factor == 1.:
+                return f'{self.base}^{self.scale} * {self.dispname}'
+            else:
+                return f'{self.factor} * {self.base}^{self.scale} * {self.dispname}'
 
     def __mul__(self, other) -> 'Unit' | Quantity:
         # self * other
@@ -1665,7 +1729,8 @@ class Unit:
             _assert_same_base(self, other)
             scale = self.scale + other.scale
             dim = self.dim * other.dim
-            name, is_fullname, dimless = _find_standard_unit(dim, self.base, scale)
+            factor = self.factor * other.factor
+            name, is_fullname, dimless = _find_standard_unit(dim, self.base, scale, factor)
             dispname = name
             iscompound = False
             if name is None and not dimless and not is_fullname and self.is_fullname and other.is_fullname:
@@ -1673,12 +1738,22 @@ class Unit:
                 dispname = f"{self.dispname} * {other.dispname}"
                 iscompound = True
                 is_fullname = True
-            return Unit(dim, scale=scale, base=self.base, name=name,
-                        dispname=dispname, iscompound=iscompound,
-                        is_fullname=is_fullname)
+            return Unit(
+                dim,
+                scale=scale,
+                base=self.base,
+                factor=self.factor,
+                name=name,
+                dispname=dispname,
+                iscompound=iscompound,
+                is_fullname=is_fullname
+            )
 
         elif isinstance(other, Quantity):
-            return Quantity(other.mantissa, unit=(self * other.unit))
+            return Quantity(
+                other.mantissa,
+                unit=(self * other.unit)
+            )
 
         elif isinstance(other, Dimension):
             raise TypeError(f"unit {self} cannot multiply by a Dimension {other}.")
@@ -1690,8 +1765,10 @@ class Unit:
         # other * self
         if isinstance(other, Unit):
             return other.__mul__(self)
+
         elif isinstance(other, Quantity):
             return Quantity(other.mantissa, unit=(other.unit * self))
+
         else:
             return Quantity(other, unit=self)
 
@@ -1701,10 +1778,11 @@ class Unit:
     def __div__(self, other) -> 'Unit':
         # self / other
         if isinstance(other, Unit):
+            _assert_same_base(self, other)
             scale = self.scale - other.scale
             dim = self.dim / other.dim
-            _assert_same_base(self, other)
-            name, is_fullname, dimless = _find_standard_unit(dim, self.base, scale)
+            factor = self.factor / other.factor
+            name, is_fullname, dimless = _find_standard_unit(dim, self.base, scale, factor)
             dispname = name
             iscompound = False
             if name is None and not dimless and not is_fullname and self.is_fullname and other.is_fullname:
@@ -1724,8 +1802,17 @@ class Unit:
                     name += other.name
                 iscompound = True
                 is_fullname = True
-            return Unit(dim, base=self.base, scale=scale, name=name, dispname=dispname,
-                        iscompound=iscompound, is_fullname=is_fullname)
+            return Unit(
+                dim,
+                base=self.base,
+                scale=scale,
+                factor=factor,
+                name=name,
+                dispname=dispname,
+                iscompound=iscompound,
+                is_fullname=is_fullname
+            )
+
         else:
             raise TypeError(f"unit {self} cannot divide by a non-unit {other}")
 
@@ -1734,7 +1821,8 @@ class Unit:
         if is_scalar_type(other) and other == 1:
             dim = self.dim ** -1
             scale = -self.scale
-            name, is_fullname, dimless = _find_standard_unit(dim, self.base, scale)
+            factor = 1. / self.factor
+            name, is_fullname, dimless = _find_standard_unit(dim, self.base, scale, factor)
             dispname = name
             iscompound = False
             if name is None and not dimless and not is_fullname and self.is_fullname:
@@ -1745,8 +1833,16 @@ class Unit:
                     dispname = self.dispname
                     name = self.name
                 iscompound = True
-            return Unit(dim, base=self.base, scale=scale, name=name, dispname=dispname,
-                        iscompound=iscompound, is_fullname=is_fullname)
+            return Unit(
+                dim,
+                base=self.base,
+                scale=scale,
+                factor=factor,
+                name=name,
+                dispname=dispname,
+                iscompound=iscompound,
+                is_fullname=is_fullname
+            )
 
         elif isinstance(other, Unit):
             return other.__div__(self)
@@ -1785,7 +1881,8 @@ class Unit:
         if is_scalar_type(other):
             dim = self.dim ** other
             scale = self.scale * other
-            name, is_fullname, dimless = _find_standard_unit(dim, self.base, scale)
+            factor = self.factor ** other
+            name, is_fullname, dimless = _find_standard_unit(dim, self.base, scale, factor)
             dispname = name
             iscompound = False
             if name is None and not dimless and not is_fullname and self.is_fullname:
@@ -1798,12 +1895,22 @@ class Unit:
                 dispname += f"^{str(other)}"
                 name += f" ** {repr(other)}"
                 iscompound = True
-            return Unit(dim, base=self.base, scale=scale, name=name, dispname=dispname,
-                        iscompound=iscompound, is_fullname=is_fullname)
+            return Unit(
+                dim,
+                base=self.base,
+                scale=scale,
+                factor=factor,
+                name=name,
+                dispname=dispname,
+                iscompound=iscompound,
+                is_fullname=is_fullname
+            )
         else:
-            raise TypeError(f"unit cannot perform an exponentiation (unit ** other) with a non-scalar, "
-                            f"since one unit cannot contain multiple units. \n"
-                            f"But we got unit={self}, other={other}")
+            raise TypeError(
+                f"unit cannot perform an exponentiation (unit ** other) with a non-scalar, "
+                f"since one unit cannot contain multiple units. \n"
+                f"But we got unit={self}, other={other}"
+            )
 
     def __ipow__(self, other, modulo=None):
         raise NotImplementedError("Units cannot be modified in-place")
@@ -1812,7 +1919,7 @@ class Unit:
         # self + other
         assert isinstance(other, Unit), f"Expected a Unit, but got {other}"
         if self.has_same_dim(other):
-            if self.has_same_scale(other):
+            if self.has_same_magnitude(other):
                 return self.copy()
             else:
                 raise TypeError(f"Units {self} and {other} have different units.")
@@ -1829,7 +1936,7 @@ class Unit:
         # self - other
         assert isinstance(other, Unit), f"Expected a Unit, but got {other}"
         if self.has_same_dim(other):
-            if self.has_same_scale(other):
+            if self.has_same_magnitude(other):
                 return self.copy()
             else:
                 raise TypeError(f"Units {self} and {other} have different units.")
@@ -1853,7 +1960,12 @@ class Unit:
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Unit):
-            return (other.dim == self.dim) and (other.scale == self.scale) and (other.base == self.base)
+            return (
+                (other.dim == self.dim) and
+                (other.scale == self.scale) and
+                (other.base == self.base) and
+                (other.factor == self.factor)
+            )
         else:
             return False
 
@@ -1861,7 +1973,20 @@ class Unit:
         return not self.__eq__(other)
 
     def __reduce__(self):
-        return _to_unit, (self.dim, self.scale, self.base, self.name, self.dispname, self.iscompound, self.is_fullname)
+        # For pickling
+        return (
+            _to_unit,
+            (
+                self.dim,
+                self.scale,
+                self.base,
+                self.factor,
+                self.name,
+                self.dispname,
+                self.iscompound,
+                self.is_fullname
+            )
+        )
 
 
 def _to_unit(*args):
@@ -1895,8 +2020,8 @@ def _zoom_values_with_units(
     first_unit = units[0]
     for i in range(1, len(values)):
         values[i] = values[i]
-        if not units[i].has_same_scale(first_unit):
-            values[i] = values[i] * (units[i].value / first_unit.value)
+        if not units[i].has_same_magnitude(first_unit):
+            values[i] = values[i] * (units[i].magnitude / first_unit.magnitude)
     return values
 
 
@@ -1964,12 +2089,13 @@ class Quantity:
         unit: Optional[Unit | jax.typing.ArrayLike] = UNITLESS,
         dtype: Optional[jax.typing.DTypeLike] = None,
     ):
-        if isinstance(mantissa, Unit):
-            assert unit is UNITLESS, "Cannot create a Quantity object with a unit and a mantissa that is a Unit object."
-            unit = mantissa
-            mantissa = 1.
 
         with jax.ensure_compile_time_eval():  # inside JIT, this can avoid to trace the constant mantissa value
+
+            if isinstance(mantissa, Unit):
+                assert unit is UNITLESS, "Cannot create a Quantity object with a unit and a mantissa that is a Unit object."
+                unit = mantissa
+                mantissa = 1.
 
             if isinstance(mantissa, (list, tuple)):
                 mantissa, new_unit = _process_list_with_units(mantissa)
@@ -1978,8 +2104,8 @@ class Quantity:
                 elif new_unit != UNITLESS:
                     if not new_unit.has_same_dim(unit):
                         raise TypeError(f"All elements must have the same unit. But got {unit} != {UNITLESS}")
-                    if not new_unit.has_same_scale(unit):
-                        mantissa = mantissa * (new_unit.value / unit.value)
+                    if not new_unit.has_same_magnitude(unit):
+                        mantissa = mantissa * (new_unit.magnitude / unit.magnitude)
                 mantissa = jnp.array(mantissa, dtype=dtype)
 
             # array mantissa
@@ -1994,6 +2120,7 @@ class Quantity:
             elif isinstance(mantissa, (np.ndarray, jax.Array)):
                 if dtype is not None:
                     mantissa = jnp.array(mantissa, dtype=dtype)
+                # skip 'asarray' if dtype is not provided
 
             elif isinstance(mantissa, (jnp.number, numbers.Number)):
                 mantissa = jnp.array(mantissa, dtype=dtype)
@@ -2219,11 +2346,13 @@ class Quantity:
         """
         assert isinstance(unit, Unit), f"Expected a Unit, but got {unit}."
         if not unit.has_same_dim(self.unit):
-            raise UnitMismatchError(f"Cannot convert to the decimal number using a unit with different "
-                                    f"dimensions. The quantity has the unit {self.unit}, but the given "
-                                    f"unit is {unit}")
-        if not unit.has_same_scale(self.unit):
-            return self.mantissa * (self.unit.value / unit.value)
+            raise UnitMismatchError(
+                f"Cannot convert to the decimal number using a unit with different "
+                f"dimensions. The quantity has the unit {self.unit}, but the given "
+                f"unit is {unit}"
+            )
+        if not unit.has_same_magnitude(self.unit):
+            return self.mantissa * (self.unit.magnitude / unit.magnitude)
         else:
             return self.mantissa
 
@@ -2231,6 +2360,18 @@ class Quantity:
         """
         Convert the given :py:class:`Quantity` into the given unit.
 
+        Examples::
+
+        >>> a = jax.numpy.array([1, 2, 3]) * mV
+        >>> a.in_unit(volt)
+        array([0.001, 0.002, 0.003]) * volt
+
+        Args:
+            unit: The new unit to convert the quantity to.
+            err_msg: The error message to show when the conversion is not possible.
+
+        Returns:
+            The new quantity with the given unit.
         """
         assert isinstance(unit, Unit), f"Expected a Unit, but got {unit}."
         if not unit.has_same_dim(self.unit):
@@ -2238,10 +2379,10 @@ class Quantity:
                 raise UnitMismatchError(f"Cannot convert to a unit with different dimensions.", self.unit, unit)
             else:
                 raise UnitMismatchError(err_msg)
-        if unit.has_same_scale(self.unit):
+        if unit.has_same_magnitude(self.unit):
             u = Quantity(self.mantissa, unit=unit)
         else:
-            u = Quantity(self.mantissa * (self.unit.value / unit.value), unit=unit)
+            u = Quantity(self.mantissa * (self.unit.magnitude / unit.magnitude), unit=unit)
         return u
 
     @staticmethod
@@ -2373,11 +2514,6 @@ class Quantity:
 
     def _check_tracer(self):
         self_value = self.mantissa
-        # if hasattr(self_value, '_trace') and hasattr(self_value._trace.main, 'jaxpr_stack'):
-        #   if len(self_value._trace.main.jaxpr_stack) == 0:
-        #     raise RuntimeError('This Array is modified during the transformation. '
-        #                        'BrainPy only supports transformations for Variable. '
-        #                        'Please declare it as a Variable.') from jax.core.escaped_tracer_error(self_value, None)
         return self_value
 
     @property
