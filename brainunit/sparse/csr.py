@@ -32,7 +32,9 @@ from brainunit.math._fun_array_creation import asarray
 from brainunit.math._fun_keep_unit import promote_dtypes
 
 __all__ = [
-    'CSR', 'CSC', 'csr_fromdense', 'csr_todense',
+    'CSR', 'CSC',
+    'csr_fromdense', 'csr_todense',
+    'csc_fromdense', 'csc_todense',
 ]
 
 Shape = tuple[int, ...]
@@ -127,7 +129,7 @@ class CSR(SparseMatrix):
                 shape=self.shape
             )
         elif other.ndim == 2 and other.shape == self.shape:
-            rows, cols = csr_to_coo(self.indices, self.indptr)
+            rows, cols = _csr_to_coo(self.indices, self.indptr)
             other = other[rows, cols]
             return CSR(
                 (op(self.data, other), self.indices, self.indptr),
@@ -146,7 +148,7 @@ class CSR(SparseMatrix):
                 shape=self.shape
             )
         elif other.ndim == 2 and other.shape == self.shape:
-            rows, cols = csr_to_coo(self.indices, self.indptr)
+            rows, cols = _csr_to_coo(self.indices, self.indptr)
             other = other[rows, cols]
             return CSR(
                 (op(other, self.data), self.indices, self.indptr),
@@ -301,7 +303,7 @@ class CSC(SparseMatrix):
                 shape=self.shape
             )
         elif other.ndim == 2 and other.shape == self.shape:
-            cols, rows = csr_to_coo(self.indices, self.indptr)
+            cols, rows = _csr_to_coo(self.indices, self.indptr)
             other = other[rows, cols]
             return CSC(
                 (op(self.data, other), self.indices, self.indptr),
@@ -320,7 +322,7 @@ class CSC(SparseMatrix):
                 shape=self.shape
             )
         elif other.ndim == 2 and other.shape == self.shape:
-            cols, rows = csr_to_coo(self.indices, self.indptr)
+            cols, rows = _csr_to_coo(self.indices, self.indptr)
             other = other[rows, cols]
             return CSC(
                 (op(other, self.data), self.indices, self.indptr),
@@ -455,7 +457,30 @@ def csr_todense(mat: CSR) -> jax.Array | Quantity:
     Returns:
       mat_dense: dense version of ``mat``
     """
+    assert isinstance(mat, CSR), f"Expected CSR, got {type(mat)}"
     return _csr_todense(mat.data, mat.indices, mat.indptr, shape=mat.shape)
+
+
+def csc_todense(mat: CSC) -> jax.Array | Quantity:
+    """Convert a CSR-format sparse matrix to a dense matrix.
+
+    Args:
+      mat : CSR matrix
+    Returns:
+      mat_dense: dense version of ``mat``
+    """
+    assert isinstance(mat, CSC), f"Expected CSC, got {type(mat)}"
+    return mat.todense()
+
+
+def csc_fromdense(
+    mat: jax.Array | Quantity,
+    *,
+    nse: int | None = None,
+    index_dtype: jax.typing.DTypeLike = np.int32
+) -> CSC:
+    assert nse is None, "nse argument is not supported for CSC"
+    return CSC.fromdense(mat, nse=nse, index_dtype=index_dtype)
 
 
 def _csr_fromdense(
@@ -571,6 +596,6 @@ def _csr_matmat(
 
 
 @jax.jit
-def csr_to_coo(indices: jax.Array, indptr: jax.Array) -> Tuple[jax.Array, jax.Array]:
+def _csr_to_coo(indices: jax.Array, indptr: jax.Array) -> Tuple[jax.Array, jax.Array]:
     """Given CSR (indices, indptr) return COO (row, col)"""
     return jnp.cumsum(jnp.zeros_like(indices).at[indptr].add(1)) - 1, indices

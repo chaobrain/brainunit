@@ -14,11 +14,12 @@
 # ==============================================================================
 
 
-from .csr import CSR, CSC, csr_todense, csr_fromdense
 from .coo import COO, coo_todense, coo_fromdense
+from .csr import CSR, CSC, csr_todense, csr_fromdense, csc_fromdense, csc_todense
 
 __all__ = [
-    "CSR", "CSC", "csr_todense", "csr_fromdense",
+    "CSR", "CSC",
+    "csr_todense", "csr_fromdense",
+    "csc_todense", "csc_fromdense",
     "COO", "coo_todense", "coo_fromdense"
 ]
-
