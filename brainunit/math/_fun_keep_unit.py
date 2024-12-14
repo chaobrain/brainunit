@@ -3393,7 +3393,26 @@ def round_(
     -------
     out : jax.Array
     """
-    return _fun_keep_unit_unary(jnp.round_, x)
+    return _fun_keep_unit_unary(jnp.round, x)
+
+
+@set_module_as('brainunit.math')
+def round(
+    x: Union[Quantity, jax.typing.ArrayLike],
+) -> jax.Array | Quantity:
+    """
+    Round an array to the nearest integer.
+
+    Parameters
+    ----------
+    x : array_like, Quantity
+      Input array.
+
+    Returns
+    -------
+    out : jax.Array
+    """
+    return _fun_keep_unit_unary(jnp.round, x)
 
 
 @set_module_as('brainunit.math')
@@ -3416,28 +3435,6 @@ def around(
     out : jax.Array
     """
     return _fun_keep_unit_unary(jnp.around, x, decimals=decimals)
-
-
-@set_module_as('brainunit.math')
-def round(
-    x: Union[Quantity, jax.typing.ArrayLike],
-    decimals: int = 0,
-) -> jax.Array | Quantity:
-    """
-    Round an array to the nearest integer.
-
-    Parameters
-    ----------
-    x : array_like, Quantity
-      Input array.
-    decimals : int, optional
-      Number of decimal places to round to (default is 0).
-
-    Returns
-    -------
-    out : jax.Array
-    """
-    return _fun_keep_unit_unary(jnp.round, x, decimals=decimals)
 
 
 @set_module_as('brainunit.math')
