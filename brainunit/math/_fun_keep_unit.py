@@ -20,6 +20,7 @@ from typing import (Union, Sequence, Tuple, Optional)
 
 import jax
 import jax.numpy as jnp
+from jax._src.numpy.util import promote_dtypes as _promote_dtypes
 import numpy as np
 
 from ._fun_array_creation import asarray
@@ -63,7 +64,7 @@ __all__ = [
     # math funcs keep unit (binary)
     'fmod', 'mod', 'copysign', 'remainder',
     'maximum', 'minimum', 'fmax', 'fmin', 'lcm', 'gcd', 'trace',
-    'add', 'subtract', 'nextafter',
+    'add', 'subtract', 'nextafter', 'promote_dtypes',
 
     # math funcs keep unit
     'interp', 'clip', 'histogram',
@@ -490,6 +491,27 @@ def broadcast_arrays(
         changing more than one location in the output array.
     """
     return _broadcast_fun(jnp.broadcast_arrays, *args)
+
+
+@set_module_as('brainunit.math')
+def promote_dtypes(
+    *args: Union[Quantity, jax.typing.ArrayLike]
+) -> Union[Quantity | jax.Array | Sequence[jax.Array | Quantity]]:
+    """
+    Promote the data types of the inputs to a common type.
+
+    Parameters
+    ----------
+    `*args` : array_likes
+        The arrays to promote.
+
+    Returns
+    -------
+    promoted : list of arrays
+        These arrays have the same shape as the input arrays, with the
+        data type of the most precise input.
+    """
+    return _broadcast_fun(_promote_dtypes, *args)
 
 
 @set_module_as('brainunit.math')
