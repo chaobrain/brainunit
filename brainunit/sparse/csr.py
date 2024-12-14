@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 import operator
-from typing import Tuple
+from typing import Tuple, Union
 
 import jax
 import jax.numpy as jnp
@@ -422,7 +422,7 @@ class CSC(SparseMatrix):
         return obj
 
 
-Data = jax.Array | Quantity
+Data = Union[jax.Array, Quantity]
 Indices = jax.Array
 Indptr = jax.Array
 

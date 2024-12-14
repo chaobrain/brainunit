@@ -19,6 +19,10 @@ from typing import Sequence
 
 from jax.experimental.sparse import JAXSparse
 
+__all__ = [
+    "SparseMatrix"
+]
+
 
 class SparseMatrix(JAXSparse):
 
