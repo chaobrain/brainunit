@@ -225,3 +225,4 @@ cython_debug/
 /docs/apis/brainunit.linalg.rst
 /docs/apis/brainunit.math.rst
 /docs/apis/changelog.md
+/dist-hist/
