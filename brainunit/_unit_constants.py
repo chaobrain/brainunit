@@ -68,9 +68,9 @@ survey_mile = Unit.create(meter.dim, name="survey mile", dispname="mi", scale=me
 nautical_mile = Unit.create(meter.dim, name="nautical mile", dispname="nmi", scale=meter.scale + 3, factor=1.8520)
 fermi = Unit.create(meter.dim, name="fermi", dispname="fm", scale=meter.scale - 15)
 angstrom = Unit.create(meter.dim, name="angstrom", dispname="Å", scale=meter.scale - 10, factor=1.0)
-micron = Unit.create(meter.dim, name="micron", dispname="µm", scale=meter.scale - 6, factor=1.0e-6)
+micron = Unit.create(meter.dim, name="micron", dispname="µm", scale=meter.scale - 6, factor=1.)
 au = astronomical_unit = Unit.create(meter.dim, name="astronomical unit", dispname="AU", scale=meter.scale + 11,
-                                     factor=1.495978707e11)
+                                     factor=1.495978707)
 light_year = Unit.create(meter.dim, name="light year", dispname="ly", scale=meter.scale + 15, factor=9.460730777119564)
 parsec = Unit.create(meter.dim, name="parsec", dispname="pc", scale=meter.scale + 16, factor=3.085677581491367e16)
 
@@ -116,13 +116,13 @@ calorie_IT = Unit.create(joule.dim, name="calorie (International Table)", dispna
                          factor=4.1868)
 erg = Unit.create(joule.dim, name="erg", dispname="erg", scale=joule.scale - 7, factor=1.)
 Btu = Btu_IT = Unit.create(joule.dim, name="British thermal unit (International Table)", dispname="Btu IT",
-                           scale=joule.scale + 4, factor=1.05505585262)
-Btu_th = Unit.create(joule.dim, name="British thermal unit (thermochemical)", dispname="Btu th", scale=joule.scale + 4,
+                           scale=joule.scale + 3, factor=1.05505585262)
+Btu_th = Unit.create(joule.dim, name="British thermal unit (thermochemical)", dispname="Btu th", scale=joule.scale + 3,
                      factor=1.0543499999744)
 ton_TNT = Unit.create(joule.dim, name="ton of TNT", dispname="ton TNT", scale=joule.scale + 9, factor=4.184)
 
 # ----- Power -----
-hp = horsepower = Unit.create(watt.dim, name="horsepower", dispname="hp", scale=watt.scale + 3,
+hp = horsepower = Unit.create(watt.dim, name="horsepower", dispname="hp", scale=watt.scale + 2,
                               factor=7.4569987158227022)
 
 # ----- Force -----
