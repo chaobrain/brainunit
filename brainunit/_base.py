@@ -4922,6 +4922,13 @@ def _remove_unit(fname, n, unit, v):
                 f"object for argument '{n}' but got '{v}'"
             )
 
+    elif unit == 1:
+        if isinstance(v, Quantity):
+            raise TypeError(
+                f"Function '{fname}' expected a Number object for argument '{n}' but got '{v}'"
+            )
+        return v
+
     else:
         raise TypeError(
             f"Function '{fname}' expected a target unit object or"
