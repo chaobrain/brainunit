@@ -2187,7 +2187,8 @@ class Quantity:
                 # skip 'asarray' if dtype is not provided
 
             elif isinstance(mantissa, (jnp.number, numbers.Number)):
-                mantissa = jnp.array(mantissa, dtype=dtype)
+                # mantissa = jnp.array(mantissa, dtype=dtype)
+                mantissa = mantissa
 
             else:
                 mantissa = mantissa
