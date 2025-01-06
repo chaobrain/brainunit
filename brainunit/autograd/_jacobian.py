@@ -130,7 +130,7 @@ def jacrev(
 
     In particular, an array is produced (with no pytrees involved) when the
     function input ``x`` and output ``fun(x)`` are each a single array, as in the
-    ``g`` example above. If ``fun(x)`` has shape ``(out1, out2, ...)`` and ``x``
+    ``simple_function`` example above. If ``fun(x)`` has shape ``(out1, out2, ...)`` and ``x``
     has shape ``(in1, in2, ...)`` then ``brainunit.autograd.jacrec(fun)(x)`` has shape
     ``(out1, out2, ..., in1, in2, ..., in1, in2, ...)``. To flatten pytrees into
     1D vectors, consider using :py:func:`jax.flatten_util.flatten_pytree`.
@@ -320,7 +320,7 @@ def jacfwd(
 
     In particular, an array is produced (with no pytrees involved) when the
     function input ``x`` and output ``fun(x)`` are each a single array, as in the
-    ``g`` example above. If ``fun(x)`` has shape ``(out1, out2, ...)`` and ``x``
+    ``simple_function`` example above. If ``fun(x)`` has shape ``(out1, out2, ...)`` and ``x``
     has shape ``(in1, in2, ...)`` then ``brainunit.autograd.jacrec(fun)(x)`` has shape
     ``(out1, out2, ..., in1, in2, ..., in1, in2, ...)``. To flatten pytrees into
     1D vectors, consider using :py:func:`jax.flatten_util.flatten_pytree`.
