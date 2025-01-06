@@ -86,7 +86,7 @@ def hessian(
 
     Thus each leaf in the tree structure of ``brainunit.autograd.hessian(fun)(x)`` corresponds to
     a leaf of ``fun(x)`` and a pair of leaves of ``x``. For each leaf in
-    ``jax.hessian(fun)(x)``, if the corresponding array leaf of ``fun(x)`` has
+    ``brainunit.autograd.hessian(fun)(x)``, if the corresponding array leaf of ``fun(x)`` has
     shape ``(out_1, out_2, ...)`` and the corresponding array leaves of ``x`` have
     shape ``(in_1_1, in_1_2, ...)`` and ``(in_2_1, in_2_2, ...)`` respectively,
     then the Hessian leaf has shape ``(out_1, out_2, ..., in_1_1, in_1_2, ...,
@@ -97,7 +97,7 @@ def hessian(
     In particular, an array is produced (with no pytrees involved) when the
     function input ``x`` and output ``fun(x)`` are each a single array, as in the
     ``g`` example above. If ``fun(x)`` has shape ``(out1, out2, ...)`` and ``x``
-    has shape ``(in1, in2, ...)`` then ``jax.hessian(fun)(x)`` has shape
+    has shape ``(in1, in2, ...)`` then ``brainunit.autograd.hessian(fun)(x)`` has shape
     ``(out1, out2, ..., in1, in2, ..., in1, in2, ...)``. To flatten pytrees into
     1D vectors, consider using :py:func:`jax.flatten_util.flatten_pytree`.
     """
