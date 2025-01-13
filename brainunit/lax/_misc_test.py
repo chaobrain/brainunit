@@ -30,3 +30,16 @@ lax_misc = [
     # getting attribute funcs
     'broadcast_shapes',
 ]
+
+class TestLaxMisc(parameterized.TestCase):
+    def test_after_all(self):
+        ...
+
+    def test_reduce(self):
+        ...
+
+    def test_reduce_precision(self):
+        ...
+
+    def test_broadcast_shapes(self):
+        ...
