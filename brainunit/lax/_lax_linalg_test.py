@@ -13,16 +13,12 @@
 # limitations under the License.
 # ==============================================================================
 import jax.numpy as jnp
-import pytest
 from absl.testing import parameterized
 from jax import lax
-import brainstate as bst
 
 import brainunit as u
 import brainunit.lax as ulax
-from brainunit import second, meter, ms
 from brainunit._base import assert_quantity
-
 
 lax_linear_algebra_change_unit_unary = [
     'cholesky',
@@ -60,6 +56,7 @@ lax_linear_algebra_nary = [
     'tridiagonal_solve',
 ]
 
+
 class TestLaxLinalg(parameterized.TestCase):
 
     def __init__(self, *args, **kwargs):
@@ -82,7 +79,6 @@ class TestLaxLinalg(parameterized.TestCase):
         assert_quantity(w, w_e, u.second)
         assert_quantity(vl, vl_e)
         assert_quantity(vr, vr_e)
-
 
     def test_cholesky(self):
         x = jnp.array([[1.0, 2.0], [3.0, 4.0]])
@@ -137,7 +133,6 @@ class TestLaxLinalg(parameterized.TestCase):
         q, r = ulax.qr(x)
         assert_quantity(q, q_e)
         assert_quantity(r, r_e, u.second)
-
 
     def test_lu(self):
         x = jnp.array([[1.0, 2.0], [3.0, 4.0]])
@@ -200,7 +195,6 @@ class TestLaxLinalg(parameterized.TestCase):
         assert_quantity(s, s_e, u.second)
         assert_quantity(vh, vh_e)
 
-
     def test_tridiagonal(self):
         x = jnp.array([[1.0, 2.0], [3.0, 4.0]])
 
@@ -259,4 +253,3 @@ class TestLaxLinalg(parameterized.TestCase):
         b = b * u.second
         result_q = ulax.tridiagonal_solve(dl, d, du, b)
         assert_quantity(result_q, expected, u.second)
-

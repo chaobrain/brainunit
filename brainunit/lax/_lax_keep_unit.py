@@ -739,13 +739,15 @@ def _fun_lax_scatter(
     mode
 ) -> Union[Quantity, jax.Array]:
     if isinstance(operand, Quantity) and isinstance(updates, Quantity):
-        assert has_same_unit(operand, updates), f'operand(unit:{operand.unit}) and updates(unit:{updates.unit}) do not have same unit'
+        assert has_same_unit(operand,
+                             updates), f'operand(unit:{operand.unit}) and updates(unit:{updates.unit}) do not have same unit'
         return maybe_decimal(Quantity(fun(operand.mantissa, scatter_indices, updates.mantissa, dimension_numbers,
                                           indices_are_sorted=indices_are_sorted,
                                           unique_indices=unique_indices,
                                           mode=mode), unit=operand.unit))
     elif isinstance(operand, Quantity) or isinstance(updates, Quantity):
-        raise AssertionError(f'operand and updates should both be `Quantity` or Array, now we got {type(operand)} and {type(updates)}')
+        raise AssertionError(
+            f'operand and updates should both be `Quantity` or Array, now we got {type(operand)} and {type(updates)}')
     else:
         return fun(operand, scatter_indices, updates, dimension_numbers,
                    indices_are_sorted=indices_are_sorted,

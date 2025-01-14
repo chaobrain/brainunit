@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Union, Callable, Any, Tuple, List
+from typing import Union, Callable, Any
 
 import jax
 from jax import lax, Array

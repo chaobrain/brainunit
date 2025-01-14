@@ -13,22 +13,19 @@
 # limitations under the License.
 # ==============================================================================
 import sys
+import unittest
 
-import jax.lax
-import jax.numpy as jnp
+import brainstate as bst
 import jax.lax as lax
+import jax.numpy as jnp
 import numpy as np
 import pytest
 from absl.testing import parameterized
-import brainstate as bst
-from jax._src import test_util as jtu
-import unittest
 
 import brainunit as u
 import brainunit.lax as ulax
 from brainunit import meter, second
 from brainunit._base import assert_quantity
-from brainunit.lax import gather
 
 lax_array_manipulation = [
     'slice', 'dynamic_slice', 'dynamic_update_slice', 'gather',
@@ -137,7 +134,7 @@ class TestLaxKeepUnitArrayManipulation(parameterized.TestCase):
         result_q = ulax.dynamic_update_slice(array, start_indices=start_indices, update=update)
         assert_quantity(result_q, expected, u.second)
 
-    @unittest.skipIf(sys.version_info < (3, 10), "JAX now do not support the python version below 3.10")
+
     @parameterized.product(
         [dict(shape=shape, idxs=idxs, dnums=dnums, slice_sizes=slice_sizes)
          for shape, idxs, dnums, slice_sizes in [
@@ -167,6 +164,7 @@ class TestLaxKeepUnitArrayManipulation(parameterized.TestCase):
               (1, 1, 3))
          ]],
     )
+    @unittest.skipIf(sys.version_info < (3, 10), "JAX now do not support the python version below 3.10")
     def test_gather(self, shape, idxs, dnums, slice_sizes):
         rand_idxs = bst.random.randint(0., high=max(shape), size=idxs.shape)
         array = bst.random.random(shape)
@@ -216,7 +214,6 @@ class TestLaxKeepUnitArrayManipulation(parameterized.TestCase):
         result_q = ulax.slice_in_dim(array, start_index=start_index, limit_index=limit_index)
         assert_quantity(result_q, expected, u.second)
 
-
     def test_index_in_dim(self):
         # TODO: No test in JAX
         ...
@@ -232,7 +229,7 @@ class TestLaxKeepUnitArrayManipulation(parameterized.TestCase):
     def test_dynamic_update_slice_in_dim(self):
         x = jnp.ones((6, 7), jnp.int32)
         with self.assertRaises(TypeError):
-            ulax.dynamic_update_slice_in_dim(x, jnp.ones((2,7), jnp.int32),
+            ulax.dynamic_update_slice_in_dim(x, jnp.ones((2, 7), jnp.int32),
                                              jnp.array([2, 2]), axis=0)
 
     def test_dynamic_update_index_in_dim(self):
@@ -360,7 +357,6 @@ class TestLaxKeepUnit(parameterized.TestCase):
 
         assert_quantity(result_q, expected, u.second)
 
-
     @parameterized.product(
         [dict(arg_shape=arg_shape, idxs=idxs, update_shape=update_shape,
               dnums=dnums)
@@ -454,7 +450,6 @@ class TestLaxKeepUnit(parameterized.TestCase):
 
         assert_quantity(result_q, expected, u.second)
 
-
     @parameterized.product(
         [dict(arg_shape=arg_shape, idxs=idxs, update_shape=update_shape,
               dnums=dnums)
@@ -497,7 +492,6 @@ class TestLaxKeepUnit(parameterized.TestCase):
 
         assert_quantity(result_q, expected, u.second)
 
-
     @parameterized.product(
         [dict(arg_shape=arg_shape, idxs=idxs, update_shape=update_shape,
               dnums=dnums)
@@ -536,7 +530,6 @@ class TestLaxKeepUnit(parameterized.TestCase):
 
         assert_quantity(result_q, expected, u.second)
 
-
     @parameterized.product(
         [dict(shape=shape, pads=pads) for shape, pads in [
             ((0, 2), [(1, 2, 1), (0, 1, 0)]),
@@ -552,7 +545,7 @@ class TestLaxKeepUnit(parameterized.TestCase):
             ((5,), [(-1, -2, 2), ]),
             ((4, 2), [(-1, -2, 1), (1, 2, 2)])
         ]
-        ],
+         ],
     )
     def test_pad(self, shape, pads):
         array = bst.random.random(shape)
@@ -575,10 +568,10 @@ class TestLaxKeepUnitNary(parameterized.TestCase):
     @parameterized.product(
         [dict(min_shape=min_shape, operand_shape=operand_shape, max_shape=max_shape)
          for min_shape, operand_shape, max_shape in [
-              [(), (2, 3), ()],
-              [(2, 3), (2, 3), ()],
-              [(), (2, 3), (2, 3)],
-              [(2, 3), (2, 3), (2, 3)],
+             [(), (2, 3), ()],
+             [(2, 3), (2, 3), ()],
+             [(), (2, 3), (2, 3)],
+             [(2, 3), (2, 3), (2, 3)],
          ]],
     )
     def test_clamp(self, min_shape, operand_shape, max_shape):
@@ -599,7 +592,6 @@ class TestLaxKeepUnitNary(parameterized.TestCase):
         assert_quantity(result_q, expected, u.second)
 
 
-
 class TestLaxTypeConversion(parameterized.TestCase):
 
     @parameterized.product(
@@ -618,10 +610,10 @@ class TestLaxTypeConversion(parameterized.TestCase):
         result_q = ulax_op(input_type(value) * u.second)
         assert_quantity(result_q, expected, u.second)
 
-
     def test_bitcast_convert_type(self):
         # TODO: dtypes.bit_width need the source code of JAX
         ...
+
 
 def compute_recall(result_neighbors, ground_truth_neighbors) -> float:
     """Computes the recall of an approximate nearest neighbor search.
@@ -647,6 +639,7 @@ def compute_recall(result_neighbors, ground_truth_neighbors) -> float:
                     if x.item() in gt_sets[q]])
                for q, nn_per_q in enumerate(result_neighbors))
     return hits / ground_truth_neighbors.size
+
 
 class TestLaxKeepUnitReturnQuantityIndex(parameterized.TestCase):
 

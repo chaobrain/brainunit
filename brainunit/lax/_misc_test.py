@@ -14,14 +14,11 @@
 # ==============================================================================
 
 
-import jax.numpy as jnp
 import jax.lax as lax
-import pytest
+import jax.numpy as jnp
 from absl.testing import parameterized
 
-import brainunit as u
 import brainunit.lax as ulax
-from brainunit import meter
 from brainunit._base import assert_quantity
 
 lax_misc = [
@@ -30,6 +27,7 @@ lax_misc = [
     # getting attribute funcs
     'broadcast_shapes',
 ]
+
 
 class TestLaxMisc(parameterized.TestCase):
     # def test_after_all(self):
