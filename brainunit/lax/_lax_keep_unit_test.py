@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
+import sys
+
 import jax.lax
 import jax.numpy as jnp
 import jax.lax as lax
@@ -20,6 +22,7 @@ import pytest
 from absl.testing import parameterized
 import brainstate as bst
 from jax._src import test_util as jtu
+import unittest
 
 import brainunit as u
 import brainunit.lax as ulax
@@ -134,6 +137,7 @@ class TestLaxKeepUnitArrayManipulation(parameterized.TestCase):
         result_q = ulax.dynamic_update_slice(array, start_indices=start_indices, update=update)
         assert_quantity(result_q, expected, u.second)
 
+    @unittest.skipIf(sys.version_info < (3, 10), "JAX now do not support the python version below 3.10")
     @parameterized.product(
         [dict(shape=shape, idxs=idxs, dnums=dnums, slice_sizes=slice_sizes)
          for shape, idxs, dnums, slice_sizes in [
