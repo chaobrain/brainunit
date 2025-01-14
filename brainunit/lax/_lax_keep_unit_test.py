@@ -164,8 +164,10 @@ class TestLaxKeepUnitArrayManipulation(parameterized.TestCase):
     #           (1, 1, 3))
     #      ]],
     # )
-    @unittest.skipIf(sys.version_info < (3, 10), "JAX now do not support the python version below 3.10")
+    # @unittest.skipIf(sys.version_info < (3, 10), "JAX now do not support the python version below 3.10")
     def test_gather(self):
+        if sys.version_info < (3, 10):
+            return
         test_cases = [
             dict(
                 shape=(5,),
