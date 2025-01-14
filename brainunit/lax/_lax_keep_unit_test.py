@@ -135,47 +135,121 @@ class TestLaxKeepUnitArrayManipulation(parameterized.TestCase):
         assert_quantity(result_q, expected, u.second)
 
 
-    @parameterized.product(
-        [dict(shape=shape, idxs=idxs, dnums=dnums, slice_sizes=slice_sizes)
-         for shape, idxs, dnums, slice_sizes in [
-             ((5,), np.array([[0], [2]]), lax.GatherDimensionNumbers(
-                 offset_dims=(), collapsed_slice_dims=(0,), start_index_map=(0,)),
-              (1,)),
-             ((10,), np.array([[0], [0], [0]]), lax.GatherDimensionNumbers(
-                 offset_dims=(1,), collapsed_slice_dims=(), start_index_map=(0,)),
-              (2,)),
-             ((10, 5,), np.array([[0], [2], [1]]), lax.GatherDimensionNumbers(
-                 offset_dims=(1,), collapsed_slice_dims=(0,), start_index_map=(0,)),
-              (1, 3)),
-             ((10, 5), np.array([[0, 2], [1, 0]]), lax.GatherDimensionNumbers(
-                 offset_dims=(1,), collapsed_slice_dims=(0,), start_index_map=(0, 1)),
-              (1, 3)),
-             ((2, 5), np.array([[[0], [2]], [[1], [1]]]),
-              lax.GatherDimensionNumbers(
-                  offset_dims=(), collapsed_slice_dims=(1,),
-                  start_index_map=(1,), operand_batching_dims=(0,),
-                  start_indices_batching_dims=(0,)),
-              (1, 1)),
-             ((2, 3, 10), np.array([[[0], [1]], [[2], [3]], [[4], [5]]]),
-              lax.GatherDimensionNumbers(
-                  offset_dims=(2,), collapsed_slice_dims=(),
-                  start_index_map=(2,), operand_batching_dims=(0, 1),
-                  start_indices_batching_dims=(1, 0)),
-              (1, 1, 3))
-         ]],
-    )
+    # @parameterized.product(
+    #     [dict(shape=shape, idxs=idxs, dnums=dnums, slice_sizes=slice_sizes)
+    #      for shape, idxs, dnums, slice_sizes in [
+    #          ((5,), np.array([[0], [2]]), lax.GatherDimensionNumbers(
+    #              offset_dims=(), collapsed_slice_dims=(0,), start_index_map=(0,)),
+    #           (1,)),
+    #          ((10,), np.array([[0], [0], [0]]), lax.GatherDimensionNumbers(
+    #              offset_dims=(1,), collapsed_slice_dims=(), start_index_map=(0,)),
+    #           (2,)),
+    #          ((10, 5,), np.array([[0], [2], [1]]), lax.GatherDimensionNumbers(
+    #              offset_dims=(1,), collapsed_slice_dims=(0,), start_index_map=(0,)),
+    #           (1, 3)),
+    #          ((10, 5), np.array([[0, 2], [1, 0]]), lax.GatherDimensionNumbers(
+    #              offset_dims=(1,), collapsed_slice_dims=(0,), start_index_map=(0, 1)),
+    #           (1, 3)),
+    #          ((2, 5), np.array([[[0], [2]], [[1], [1]]]),
+    #           lax.GatherDimensionNumbers(
+    #               offset_dims=(), collapsed_slice_dims=(1,),
+    #               start_index_map=(1,), operand_batching_dims=(0,),
+    #               start_indices_batching_dims=(0,)),
+    #           (1, 1)),
+    #          ((2, 3, 10), np.array([[[0], [1]], [[2], [3]], [[4], [5]]]),
+    #           lax.GatherDimensionNumbers(
+    #               offset_dims=(2,), collapsed_slice_dims=(),
+    #               start_index_map=(2,), operand_batching_dims=(0, 1),
+    #               start_indices_batching_dims=(1, 0)),
+    #           (1, 1, 3))
+    #      ]],
+    # )
     @unittest.skipIf(sys.version_info < (3, 10), "JAX now do not support the python version below 3.10")
-    def test_gather(self, shape, idxs, dnums, slice_sizes):
-        rand_idxs = bst.random.randint(0., high=max(shape), size=idxs.shape)
-        array = bst.random.random(shape)
+    def test_gather(self):
+        test_cases = [
+            dict(
+                shape=(5,),
+                idxs=np.array([[0], [2]]),
+                dnums=lax.GatherDimensionNumbers(
+                    offset_dims=(),
+                    collapsed_slice_dims=(0,),
+                    start_index_map=(0,)
+                ),
+                slice_sizes=(1,)
+            ),
+            dict(
+                shape=(10,),
+                idxs=np.array([[0], [0], [0]]),
+                dnums=lax.GatherDimensionNumbers(
+                    offset_dims=(1,),
+                    collapsed_slice_dims=(),
+                    start_index_map=(0,)
+                ),
+                slice_sizes=(2,)
+            ),
+            dict(
+                shape=(10, 5),
+                idxs=np.array([[0], [2], [1]]),
+                dnums=lax.GatherDimensionNumbers(
+                    offset_dims=(1,),
+                    collapsed_slice_dims=(0,),
+                    start_index_map=(0,)
+                ),
+                slice_sizes=(1, 3)
+            ),
+            dict(
+                shape=(10, 5),
+                idxs=np.array([[0, 2], [1, 0]]),
+                dnums=lax.GatherDimensionNumbers(
+                    offset_dims=(1,),
+                    collapsed_slice_dims=(0,),
+                    start_index_map=(0, 1)
+                ),
+                slice_sizes=(1, 3)
+            ),
+            dict(
+                shape=(2, 5),
+                idxs=np.array([[[0], [2]], [[1], [1]]]),
+                dnums=lax.GatherDimensionNumbers(
+                    offset_dims=(),
+                    collapsed_slice_dims=(1,),
+                    start_index_map=(1,),
+                    operand_batching_dims=(0,),
+                    start_indices_batching_dims=(0,)
+                ),
+                slice_sizes=(1, 1)
+            ),
+            dict(
+                shape=(2, 3, 10),
+                idxs=np.array([[[0], [1]], [[2], [3]], [[4], [5]]]),
+                dnums=lax.GatherDimensionNumbers(
+                    offset_dims=(2,),
+                    collapsed_slice_dims=(),
+                    start_index_map=(2,),
+                    operand_batching_dims=(0, 1),
+                    start_indices_batching_dims=(1, 0)
+                ),
+                slice_sizes=(1, 1, 3)
+            )
+        ]
 
-        result = ulax.gather(array, rand_idxs, dimension_numbers=dnums, slice_sizes=slice_sizes)
-        expected = lax.gather(array, rand_idxs, dimension_numbers=dnums, slice_sizes=slice_sizes)
-        self.assertTrue(jnp.all(result == expected))
+        for case in test_cases:
+            with self.subTest(**case):
+                shape = case["shape"]
+                idxs = case["idxs"]
+                dnums = case["dnums"]
+                slice_sizes = case["slice_sizes"]
 
-        array = array * u.second
-        result_q = ulax.gather(array, rand_idxs, dimension_numbers=dnums, slice_sizes=slice_sizes)
-        assert_quantity(result_q, expected, u.second)
+                rand_idxs = bst.random.randint(0., high=max(shape), size=idxs.shape)
+                array = bst.random.random(shape)
+
+                result = ulax.gather(array, rand_idxs, dimension_numbers=dnums, slice_sizes=slice_sizes)
+                expected = lax.gather(array, rand_idxs, dimension_numbers=dnums, slice_sizes=slice_sizes)
+                self.assertTrue(jnp.all(result == expected))
+
+                array = array * u.second
+                result_q = ulax.gather(array, rand_idxs, dimension_numbers=dnums, slice_sizes=slice_sizes)
+                assert_quantity(result_q, expected, u.second)
 
     @parameterized.product(
         [dict(shape=shape, idxs=idxs, axes=axes)
