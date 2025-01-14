@@ -57,7 +57,7 @@ def cholesky(
     return _fun_change_unit_unary(lax.linalg.cholesky,
                                   lambda u: u ** 0.5,
                                   x,
-                                  symmetrize_input)
+                                  symmetrize_input=symmetrize_input)
 
 
 @set_module_as('brainunit.lax')
