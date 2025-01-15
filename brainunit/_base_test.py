@@ -13,15 +13,17 @@
 # limitations under the License.
 # ==============================================================================
 
+from __future__ import annotations
 
-import os
-import tempfile
-
-os.environ['JAX_TRACEBACK_FILTERING'] = 'off'
 import itertools
+import os
+import pickle
+import sys
+import tempfile
 import unittest
 import warnings
 from copy import deepcopy
+from typing import Union
 
 import brainstate as bst
 import jax
@@ -29,7 +31,6 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 from numpy.testing import assert_equal
-from typing import Union
 
 import brainunit as u
 from brainunit._base import (
@@ -49,7 +50,6 @@ from brainunit._base import (
 )
 from brainunit._unit_common import *
 from brainunit._unit_shortcuts import kHz, ms, mV, nS
-import pickle
 
 
 class TestDimension(unittest.TestCase):
@@ -902,6 +902,9 @@ class TestQuantity(unittest.TestCase):
         print(x.to(u.uvolt))
 
     def test_quantity_type(self):
+
+        # if sys.version_info >= (3, 11):
+
         def f1(a: u.Quantity[u.ms]) -> u.Quantity[u.mV]:
             return a
 
