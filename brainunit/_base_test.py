@@ -29,6 +29,7 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 from numpy.testing import assert_equal
+from typing import Union
 
 import brainunit as u
 from brainunit._base import (
@@ -900,6 +901,16 @@ class TestQuantity(unittest.TestCase):
         print(x.to(u.volt))
         print(x.to(u.uvolt))
 
+    def test_quantity_type(self):
+        def f1(a: u.Quantity[u.ms]) -> u.Quantity[u.mV]:
+            return a
+
+        def f2(a: u.Quantity[Union[u.ms, u.mA]]) -> u.Quantity[u.mV]:
+            return a
+
+        def f3(a: u.Quantity[Union[u.ms, u.mA]]) -> u.Quantity[Union[u.mV, u.ms]]:
+            return a
+
 
 class TestNumPyFunctions(unittest.TestCase):
     def test_special_case_numpy_functions(self):
@@ -1466,12 +1477,6 @@ def test_pickle():
     with open(filename, "rb") as f:
         b = pickle.load(f)
         print(b)
-
-
-
-
-
-
 
 
 def test_str_repr():
