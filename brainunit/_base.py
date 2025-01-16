@@ -4962,7 +4962,7 @@ def convert_in_si():
     This function traverses the local variables in the calling scope and converts all `Quantity`
     instances (including those nested in lists, tuples, or dictionaries) to their SI unit equivalents.
     The conversion is performed by calling the `factorless()` method on each `Quantity` instance,
-    which strips the unit and returns the raw value in SI units.
+    which convert the unit and returns the quantities in SI units.
 
     Notes:
         - This function modifies the local variables in the calling scope.
