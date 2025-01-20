@@ -29,6 +29,9 @@ import numpy as np
 from jax.interpreters.partial_eval import DynamicJaxprTracer
 from jax.tree_util import register_pytree_node_class
 
+from .environ import (get_compute_mode,
+                      SI_MODE,
+                      NON_SI_MODE)
 from ._misc import set_module_as
 from ._sparse_base import SparseMatrix
 
@@ -65,7 +68,6 @@ __all__ = [
 
     # advanced functions
     'get_or_create_dimension',
-    'convert_in_si',
 ]
 
 StaticScalar = Union[
@@ -1233,6 +1235,7 @@ def _assert_same_base(u1, u2):
                                   f"But we got {u1.base} != {u1.base}.")
 
 
+# TODO: Cannot find compound standard unit
 def _find_standard_unit(dim: Dimension, base, scale, factor) -> Tuple[Optional[str], bool, bool]:
     """
     Find a standard unit for the given dimension, base, scale, and factor.
@@ -2198,6 +2201,11 @@ class Quantity(Generic[A]):
 
         # dimension
         self._unit = unit
+
+        if get_compute_mode() == SI_MODE:
+            self._mantissa = self._mantissa * self._unit.factor
+            self._unit = self._unit.factorless()
+
 
     @property
     def at(self):
@@ -4944,89 +4952,3 @@ def _assign_unit(f, val, unit):
 
 def _is_quantity(x):
     return isinstance(x, Quantity)
-
-
-def _convert_in_si(x):
-    """
-    Convert a Quantity to a Quantity in SI units.
-    """
-    if isinstance(x, Quantity) or isinstance(x, Unit):
-        return x.factorless()
-    return x
-
-
-def convert_in_si():
-    """
-    Convert all the local variables in SI units.
-
-    This function traverses the local variables in the calling scope and converts all `Quantity`
-    instances (including those nested in lists, tuples, or dictionaries) to their SI unit equivalents.
-    The conversion is performed by calling the `factorless()` method on each `Quantity` instance,
-    which convert the unit and returns the quantities in SI units.
-
-    Notes:
-        - This function modifies the local variables in the calling scope.
-        - Only `Quantity` instances are affected; other types of variables remain unchanged.
-        - If a `Quantity` instance is nested within a list, tuple, or dictionary, it will be
-          recursively converted to its SI unit equivalent.
-
-    Examples:
-        >>> import brainunit as u
-        >>> time1 = 1 * u.second
-        >>> time2 = 1 * u.minute
-        >>> time3 = time1 + time2
-        >>> time4 = time2 + time1
-        >>> time3
-        61. * second
-        >>> time4
-        1.0166667 * minute
-
-        >>> u.convert_in_si()  # Convert all local variables to SI units
-        >>> time3 = time1 + time2
-        >>> time4 = time2 + time1
-        >>> time3
-        61. * second
-        >>> time4
-        6.1 * dasecond
-
-        >>> length1 = 1 * u.inch
-        >>> result1 = time1 * length1
-        >>> result2 = u.math.multiply(time1, length1)
-        >>> result1
-        1. * second * inch
-        >>> result2
-        1. * second * inch
-
-        >>> u.convert_in_si()  # Convert all local variables to SI units
-        >>> result1 = time1 * length1
-        >>> result2 = u.math.multiply(time1, length1)
-        >>> result1
-        0.0254 * second * meter
-        >>> result2
-        0.0254 * second * meter
-
-        >>> dict1 = {
-        ... 'time1': 1 * u.second,
-        ... 'time2': 1 * u.minute,
-        ... 'length1': 1 * u.inch,
-        ...}
-        >>> u.convert_in_si()  # Convert all local variables to SI units
-        >>> dict1
-        {'length1': 0.0254 * meter, 'time1': 1 * second, 'time2': 6. * dasecond}
-
-    Raises:
-        None: This function does not raise any exceptions explicitly, but may propagate
-              exceptions from `factorless()` or `jax.tree.map()` if they fail.
-
-    See Also:
-        - `Quantity.factorless()`: Method used to convert `Quantity` instances to SI units.
-    """
-    frame = inspect.currentframe()
-    try:
-        caller_frame = frame.f_back
-        caller_globals = caller_frame.f_globals
-
-        for key, val in list(caller_globals.items()):
-            caller_globals[key] = jax.tree.map(_convert_in_si, val, is_leaf=lambda x: _is_quantity(x))
-    finally:
-        del frame
