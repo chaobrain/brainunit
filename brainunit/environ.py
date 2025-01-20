@@ -108,9 +108,9 @@ def get(key: str, default: Any = _NOT_PROVIDE, desc: str = None):
     item: Any
       The default computation environment.
     """
-    if key in DEFAULT.contexts:
-        if len(DEFAULT.contexts[key]) > 0:
-            return DEFAULT.contexts[key][-1]
+    if key in DEFAULT.contexts and len(DEFAULT.contexts[key]) > 0:
+        return DEFAULT.contexts[key][-1]
+
     if key in DEFAULT.settings:
         return DEFAULT.settings[key]
 
@@ -140,7 +140,7 @@ def all() -> dict:
     r: dict
       The current default computation environment.
     """
-    r = dict()
+    r = {}
     for k, v in DEFAULT.contexts.items():
         if v:
             r[k] = v[-1]
@@ -175,7 +175,10 @@ def set(
         The default compute mode. Default is computing in 'si'.
     """
     if compute_mode is not None:
-        assert compute_mode in ['si', 'non_si'], f"compute_mode must be 'si' or 'non_si'. Got: {compute_mode}"
+        assert compute_mode in {
+            'si',
+            'non_si',
+        }, f"compute_mode must be 'si' or 'non_si'. Got: {compute_mode}"
         kwargs['compute_mode'] = compute_mode
 
     # set default environment
