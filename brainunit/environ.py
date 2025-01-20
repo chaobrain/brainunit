@@ -74,8 +74,6 @@ def context(**kwargs):
     if 'compute_mode' in kwargs:
         if kwargs['compute_mode'] == SI_MODE:
             _convert_to_si_quantity(**kwargs)
-        else:
-            pass
 
     try:
         for k, v in kwargs.items():
