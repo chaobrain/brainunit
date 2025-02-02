@@ -56,7 +56,6 @@ graph TD
     D --> D4[Parallelization]
 ```
 
-
 A quick example:
 
 ```python
