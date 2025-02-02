@@ -1,9 +1,8 @@
-
-
-# ``BrainUnit``: physical units and unit-aware mathematical system for brain dynamics and AI4Science
+<h1 align='center'>BrainUnit</h1>
+<h2 align='center'>Physical units and unit-aware math system for general-purpose brain dynamics modeling</h2>
 
 <p align="center">
-  	<img alt="Header image of brainunit." src="https://github.com/chaobrain/brainunit/blob/main/docs/_static/brainunit.png" width=50%>
+  	<img alt="Header image of brainunit." src="https://raw.githubusercontent.com/chaobrain/saiunit/main/docs/_static/brainunit.png" width=30%>
 </p> 
 
 
@@ -15,73 +14,87 @@
         <img src='https://readthedocs.org/projects/brainunit/badge/?version=latest' alt='Documentation Status' />
     </a>  	
     <a href="https://badge.fury.io/py/brainunit"><img alt="PyPI version" src="https://badge.fury.io/py/brainunit.svg"></a>
-    <a href="https://github.com/chaobrain/brainunit/actions/workflows/CI.yml"><img alt="Continuous Integration" src="https://github.com/chaobrain/brainunit/actions/workflows/CI.yml/badge.svg"></a>
     <a href="https://pepy.tech/projects/brainunit"><img src="https://static.pepy.tech/badge/brainunit" alt="PyPI Downloads"></a>
 </p>
 
 
-## Motivation
 
 
-[``brainunit``](https://github.com/chaobrain/brainunit) provides physical units and unit-aware mathematical system in JAX for brain dynamics and AI4Science. 
+[BrainUnit](https://github.com/chaobrain/brainunit) provides physical units and unit-aware mathematical system in JAX for brain dynamics modeling. It introduces rigoirous physical units into high-performance AI-driven abstract numerical computing. 
 
-It is initially designed to enable unit-aware computations in brain dynamics modeling (see our [ecosystem](https://ecosystem-for-brain-dynamics.readthedocs.io/)).
+BrainUnit is initially designed to enable unit-aware computations in brain dynamics modeling (see our [BDP ecosystem](https://ecosystem-for-brain-dynamics.readthedocs.io/)). However, its features and capacities can be applied to general domains in scientific computing and AI4Science. Starting in 2025/02, BrainUnit has been fully integrated into [SAIUnit](https://github.com/chaobrain/saiunit) (the **Unit** system for **S**cientific **AI**). 
 
-However, its features and capacities can be applied to general domains in scientific computing and AI for science. 
-We also provide ample examples and tutorials to help users integrate ``brainunit`` into their projects 
-(see [Unit-aware computation ecosystem](#unit-aware-computation-ecosystem) in the below).
+Functionalities are the same for both ``brainunit`` and ``saiunit``, and their functions and data structures are interoperable, sharing the same set of APIs, and eliminating any potential conflicts. This meas that 
+
+```python
+import brainunit as u
+```
+
+equals to 
+
+```python
+import saiunit as u
+```
+
+For users primarily engaged in general scientific computing, `saiunit` is likely the preferred choice. However, for those focused on brain modeling, we recommend `brainunit`, as it is more closely aligned with our specialized brain dynamics programming ecosystem.
+
+
+
+## Documentation
+
+The official documentation of BrainUnit is hosted on Read the Docs: [https://brainunit.readthedocs.io](https://brainunit.readthedocs.io)
+
 
 
 ## Features
 
+`brainunit` can be seamlessly integrated into every aspect of our [brain dynamics programming ecosystem](https://ecosystem-for-brain-dynamics.readthedocs.io/), such as, the checkpointing of [braintools](https://github.com/chaobrain/braintools), the event-driven operators in [brainevent](https://github.com/chaobrain/brainevent), the state-based JIT compilation in [brainstate](https://github.com/chaobrain/brainstate), online learning rules in [brainscale](https://github.com/chaobrain/brainscale), or event more. 
 
-The uniqueness of ``Brainunit`` lies in that it brings physical units handling and AI-driven computation together in a seamless way:
-
-- It provides over 2,000 commonly used physical units and constants.
-- It implements over 500 unit-aware mathematical functions.
-- Its physical units and unit-aware functions are fully compatible with JAX, including autograd, JIT, vecterization, parallelization, and others.
-
-
-```mermaid
-graph TD
-    A[BrainUnit] --> B[Physical Units]
-    A --> C[Mathematical Functions]
-    A --> D[JAX Integration]
-    B --> B1[2000+ Units]
-    B --> B2[Physical Constants]
-    C --> C1[500+ Unit-aware Functions]
-    D --> D1[Autograd]
-    D --> D2[JIT Compilation]
-    D --> D3[Vectorization]
-    D --> D4[Parallelization]
-```
-
-A quick example:
+A quick example for this kind of integration:
 
 ```python
 
+import braintools
+import brainevent.nn
+import brainstate
 import brainunit as u
 
-# Define a physical quantity
-x = 3.0 * u.meter
-x
-# [out] 3. * meter
 
-# autograd
-f = lambda x: x ** 3
-u.autograd.grad(f)(x)
-# [out] 27. * meter2 
+class EINet(brainstate.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.n_exc = 3200
+        self.n_inh = 800
+        self.num = self.n_exc + self.n_inh
+        self.N = brainstate.nn.LIFRef(
+            self.num, V_rest=-60. * u.mV, V_th=-50. * u.mV, V_reset=-60. * u.mV,
+            tau=20. * u.ms, tau_ref=5. * u.ms,
+            V_initializer=brainstate.init.Normal(-55., 2., unit=u.mV)
+        )
+        self.E = brainstate.nn.AlignPostProj(
+            comm=brainevent.nn.FixedProb(self.n_exc, self.num, 0.02, 0.6 * u.mS),
+            syn=brainstate.nn.Expon.desc(self.num, tau=5. * u.ms),
+            out=brainstate.nn.COBA.desc(E=0. * u.mV),
+            post=self.N
+        )
+        self.I = brainstate.nn.AlignPostProj(
+            comm=brainevent.nn.FixedProb(self.n_inh, self.num, 0.02, 6.7 * u.mS),
+            syn=brainstate.nn.Expon.desc(self.num, tau=10. * u.ms),
+            out=brainstate.nn.COBA.desc(E=-80. * u.mV),
+            post=self.N
+        )
 
-
-# JIT
-import jax
-jax.jit(f)(x)
-# [out] 27. * klitre
-
-# vmap
-jax.vmap(f)(u.math.arange(0. * u.mV, 10. * u.mV, 1. * u.mV))
-# [out]  ArrayImpl([  0.,   1.,   8.,  27.,  64., 125., 216., 343., 512., 729.],
-#                  dtype=float32) * mvolt3
+    def update(self, t, inp):
+        with brainstate.environ.context(t=t):
+            spk = self.N.get_spike() != 0.
+            self.E(spk[:self.n_exc])
+            self.I(spk[self.n_exc:])
+            self.N(inp)
+            return self.N.get_spike()
+    
+    def save_checkpoint(self):
+        braintools.file.msgpack_save('states.msgpack', self.states())
+    
 ```
 
 
@@ -94,33 +107,8 @@ You can install ``brainunit`` via pip:
 pip install brainunit --upgrade
 ```
 
-## Documentation
-
-The official documentation is hosted on Read the Docs: [https://brainunit.readthedocs.io](https://brainunit.readthedocs.io)
-
-
-## Unit-aware computation ecosystem
-
-
-`brainunit` has been deeply integrated into following diverse projects, such as:
-
-- [``brainstate``](https://github.com/chaobrain/brainstate): A State-based Transformation System for Program Compilation and Augmentation
-- [``braintaichi``](https://github.com/chaobrain/braintaichi): Leveraging Taichi Lang to customize brain dynamics operators
-- [``braintools``](https://github.com/chaobrain/braintools): The Common Toolbox for Brain Dynamics Programming.
-- [``dendritex``](https://github.com/chaobrain/dendritex): Dendritic Modeling in JAX
-- [``pinnx``](https://github.com/chaobrain/pinnx): Physics-Informed Neural Networks for Scientific Machine Learning in JAX.
-
-
-Other unofficial projects include:
-
-- [``diffrax``](https://github.com/chaoming0625/diffrax): Numerical differential equation solvers in JAX.
-- [``jax-md``](https://github.com/Routhleck/jax-md): Differentiable Molecular Dynamics in JAX
-- [``Catalax``](https://github.com/Routhleck/Catalax): JAX-based framework to model biological systems
-- ...
-
 
 
 ## See also the BDP ecosystem
 
-We are building the [brain dynamics programming ecosystem](https://ecosystem-for-brain-dynamics.readthedocs.io/). 
-[``brainunit``](https://github.com/chaobrain/brainunit) has been deeply integrated into our BDP ecosystem.
+We are building the [brain dynamics programming (BDP) ecosystem](https://ecosystem-for-brain-dynamics.readthedocs.io/). [brainunit](https://github.com/chaobrain/brainunit) has been deeply integrated into our BDP ecosystem.
