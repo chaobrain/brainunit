@@ -14,7 +14,6 @@
         <img src='https://readthedocs.org/projects/brainunit/badge/?version=latest' alt='Documentation Status' />
     </a>  	
     <a href="https://badge.fury.io/py/brainunit"><img alt="PyPI version" src="https://badge.fury.io/py/brainunit.svg"></a>
-    <a href="https://github.com/chaobrain/brainunit/actions/workflows/CI.yml"><img alt="Continuous Integration" src="https://github.com/chaobrain/brainunit/actions/workflows/CI.yml/badge.svg"></a>
     <a href="https://pepy.tech/projects/brainunit"><img src="https://static.pepy.tech/badge/brainunit" alt="PyPI Downloads"></a>
 </p>
 
@@ -31,13 +30,19 @@ Functionalities are the same for both ``brainunit`` and ``saiunit``, and their f
 import brainunit as u
 ```
 
-equally to 
+equals to 
 
 ```python
 import saiunit as u
 ```
 
 For users primarily engaged in general scientific computing, `saiunit` is likely the preferred choice. However, for those focused on brain modeling, we recommend `brainunit`, as it is more closely aligned with our specialized brain dynamics programming ecosystem.
+
+
+
+## Documentation
+
+The official documentation of BrainUnit is hosted on Read the Docs: [https://brainunit.readthedocs.io](https://brainunit.readthedocs.io)
 
 
 
@@ -101,12 +106,6 @@ You can install ``brainunit`` via pip:
 ```bash
 pip install brainunit --upgrade
 ```
-
-
-
-## Documentation
-
-The official documentation is hosted on Read the Docs: [https://brainunit.readthedocs.io](https://brainunit.readthedocs.io)
 
 
 
