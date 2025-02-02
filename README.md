@@ -1,6 +1,6 @@
+<h1 align='center'>BrainUnit</h1>
+<h2 align='center'>Physical units and unit-aware mathematical system for general-purpose brain dynamics modeling</h2>
 
-
-# ``BrainUnit``: physical units and unit-aware mathematical system for brain dynamics and AI4Science
 
 <p align="center">
   	<img alt="Header image of brainunit." src="https://github.com/chaobrain/brainunit/blob/main/docs/_static/brainunit.png" width=50%>
@@ -80,8 +80,7 @@ jax.jit(f)(x)
 
 # vmap
 jax.vmap(f)(u.math.arange(0. * u.mV, 10. * u.mV, 1. * u.mV))
-# [out]  ArrayImpl([  0.,   1.,   8.,  27.,  64., 125., 216., 343., 512., 729.],
-#                  dtype=float32) * mvolt3
+# [out]  ArrayImpl([  0.,   1.,   8.,  27.,  64., 125., 216., 343., 512., 729.]) * mvolt3
 ```
 
 
@@ -97,26 +96,6 @@ pip install brainunit --upgrade
 ## Documentation
 
 The official documentation is hosted on Read the Docs: [https://brainunit.readthedocs.io](https://brainunit.readthedocs.io)
-
-
-## Unit-aware computation ecosystem
-
-
-`brainunit` has been deeply integrated into following diverse projects, such as:
-
-- [``brainstate``](https://github.com/chaobrain/brainstate): A State-based Transformation System for Program Compilation and Augmentation
-- [``braintaichi``](https://github.com/chaobrain/braintaichi): Leveraging Taichi Lang to customize brain dynamics operators
-- [``braintools``](https://github.com/chaobrain/braintools): The Common Toolbox for Brain Dynamics Programming.
-- [``dendritex``](https://github.com/chaobrain/dendritex): Dendritic Modeling in JAX
-- [``pinnx``](https://github.com/chaobrain/pinnx): Physics-Informed Neural Networks for Scientific Machine Learning in JAX.
-
-
-Other unofficial projects include:
-
-- [``diffrax``](https://github.com/chaoming0625/diffrax): Numerical differential equation solvers in JAX.
-- [``jax-md``](https://github.com/Routhleck/jax-md): Differentiable Molecular Dynamics in JAX
-- [``Catalax``](https://github.com/Routhleck/Catalax): JAX-based framework to model biological systems
-- ...
 
 
 

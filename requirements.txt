@@ -1,5 +1,0 @@
-numpy
-jax
-jaxlib
-typing_extensions
-
