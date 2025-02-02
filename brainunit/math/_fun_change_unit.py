@@ -46,7 +46,6 @@ __all__ = [
 
 def _fun_change_unit_unary(val_fun, unit_fun, x, *args, **kwargs):
     if isinstance(x, Quantity):
-        # x = x.factorless()
         r = Quantity(val_fun(x.mantissa, *args, **kwargs), unit=unit_fun(x.unit))
         return maybe_decimal(r)
     return val_fun(x, *args, **kwargs)
@@ -517,18 +516,17 @@ cumproduct = cumprod
 
 def _fun_change_unit_binary(val_fun, unit_fun, x, y, *args, **kwargs):
     if isinstance(x, Quantity) and isinstance(y, Quantity):
-        # x = x.factorless()
-        # y = y.factorless()
+
         return maybe_decimal(
             Quantity(val_fun(x.mantissa, y.mantissa, *args, **kwargs), unit=unit_fun(x.unit, y.unit))
         )
     elif isinstance(x, Quantity):
-        # x = x.factorless()
+
         return maybe_decimal(
             Quantity(val_fun(x.mantissa, y, *args, **kwargs), unit=unit_fun(x.unit, UNITLESS))
         )
     elif isinstance(y, Quantity):
-        # y = y.factorless()
+
         return maybe_decimal(
             Quantity(val_fun(x, y.mantissa, *args, **kwargs), unit=unit_fun(UNITLESS, y.unit))
         )

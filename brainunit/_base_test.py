@@ -30,7 +30,6 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from numpy.ma.core import indices
 from numpy.testing import assert_equal
 
 import brainunit as u
@@ -769,7 +768,7 @@ class TestQuantity(unittest.TestCase):
         assert d_copy["x"] == 2 * second
         assert d["x"] == 1 * second
 
-    def test_indices_functions(self):
+    def test_numpy_functions_indices(self):
         """
         Check numpy functions that return indices.
         """

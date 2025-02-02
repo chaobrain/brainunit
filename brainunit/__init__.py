@@ -18,6 +18,7 @@ __version__ = "0.0.4"
 from . import _matplotlib_compat
 from . import autograd
 from . import constants
+from . import environ
 from . import fft
 from . import lax
 from . import linalg
@@ -38,6 +39,7 @@ __all__ = (
         'math',
         'linalg',
         'autograd',
+        'environ',
         'fft',
         'constants',
         'sparse'
