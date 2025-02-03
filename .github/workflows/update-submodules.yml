@@ -24,7 +24,7 @@ jobs:
 
       - name: Update Submodules
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.TPA_TOKEN }}
         run: |
           git submodule update --init --remote --force
           
