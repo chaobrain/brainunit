@@ -23,6 +23,8 @@ jobs:
           git remote set-url origin https://x-access-token:${{ secrets.TPA_TOKEN }}@github.com/${{ github.repository }}.git
 
       - name: Update Submodules
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git submodule update --init --remote --force
           
@@ -34,5 +36,3 @@ jobs:
             echo "No changes to commit"
           fi
 
-      - env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
