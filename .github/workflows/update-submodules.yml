@@ -15,9 +15,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          repo-token: ${{ secrets.TPA_TOKEN }}
 
       - name: Set up Git
         run: |
@@ -36,3 +33,6 @@ jobs:
           else
             echo "No changes to commit"
           fi
+
+      - env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
