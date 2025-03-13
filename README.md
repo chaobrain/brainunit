@@ -109,6 +109,6 @@ pip install brainunit --upgrade
 
 
 
-## See also the BDP ecosystem
+## See also the brain modeling ecosystem
 
-We are building the [brain dynamics programming (BDP) ecosystem](https://ecosystem-for-brain-dynamics.readthedocs.io/). [brainunit](https://github.com/chaobrain/brainunit) has been deeply integrated into our BDP ecosystem.
+We are building the [brain modeling ecosystem](https://brainmodeling.readthedocs.io/). [brainunit](https://github.com/chaobrain/brainunit) has been deeply integrated into our BDP ecosystem.
