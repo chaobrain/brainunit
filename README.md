@@ -20,7 +20,7 @@
 
 
 
-[BrainUnit](https://github.com/chaobrain/brainunit) provides physical units and unit-aware mathematical system in JAX for brain dynamics modeling. It introduces rigoirous physical units into high-performance AI-driven abstract numerical computing. 
+[BrainUnit](https://github.com/chaobrain/brainunit) provides physical units and unit-aware mathematical system in JAX for brain dynamics modeling. It introduces rigorous physical units into high-performance AI-driven abstract numerical computing. 
 
 BrainUnit is initially designed to enable unit-aware computations in brain dynamics modeling (see our [BDP ecosystem](https://ecosystem-for-brain-dynamics.readthedocs.io/)). However, its features and capacities can be applied to general domains in scientific computing and AI4Science. Starting in 2025/02, BrainUnit has been fully integrated into [SAIUnit](https://github.com/chaobrain/saiunit) (the **Unit** system for **S**cientific **AI**). 
 
@@ -109,6 +109,6 @@ pip install brainunit --upgrade
 
 
 
-## See also the BDP ecosystem
+## See also the brain modeling ecosystem
 
-We are building the [brain dynamics programming (BDP) ecosystem](https://ecosystem-for-brain-dynamics.readthedocs.io/). [brainunit](https://github.com/chaobrain/brainunit) has been deeply integrated into our BDP ecosystem.
+We are building the [brain modeling ecosystem](https://brainmodeling.readthedocs.io/). [brainunit](https://github.com/chaobrain/brainunit) has been deeply integrated into our BDP ecosystem.
