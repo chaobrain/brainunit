@@ -48,14 +48,14 @@ The official documentation of BrainUnit is hosted on Read the Docs: [https://bra
 
 ## Features
 
-`brainunit` can be seamlessly integrated into every aspect of our [brain dynamics programming ecosystem](https://ecosystem-for-brain-dynamics.readthedocs.io/), such as, the checkpointing of [braintools](https://github.com/chaobrain/braintools), the event-driven operators in [brainevent](https://github.com/chaobrain/brainevent), the state-based JIT compilation in [brainstate](https://github.com/chaobrain/brainstate), online learning rules in [brainscale](https://github.com/chaobrain/brainscale), or event more. 
+`brainunit` can be seamlessly integrated into every aspect of our [brain modeling ecosystem](https://brainmodeling.readthedocs.io/), such as, the checkpointing of [braintools](https://github.com/chaobrain/braintools), the event-driven operators in [brainevent](https://github.com/chaobrain/brainevent), the state-based JIT compilation in [brainstate](https://github.com/chaobrain/brainstate), online learning rules in [brainscale](https://github.com/chaobrain/brainscale), or event more. 
 
 A quick example for this kind of integration:
 
 ```python
 
 import braintools
-import brainevent.nn
+import brainevent
 import brainstate
 import brainunit as u
 
@@ -72,13 +72,13 @@ class EINet(brainstate.nn.Module):
             V_initializer=brainstate.init.Normal(-55., 2., unit=u.mV)
         )
         self.E = brainstate.nn.AlignPostProj(
-            comm=brainevent.nn.FixedProb(self.n_exc, self.num, 0.02, 0.6 * u.mS),
+            comm=brainstate.nn.EventFixedProb(self.n_exc, self.num, 0.02, 0.6 * u.mS),
             syn=brainstate.nn.Expon.desc(self.num, tau=5. * u.ms),
             out=brainstate.nn.COBA.desc(E=0. * u.mV),
             post=self.N
         )
         self.I = brainstate.nn.AlignPostProj(
-            comm=brainevent.nn.FixedProb(self.n_inh, self.num, 0.02, 6.7 * u.mS),
+            comm=brainstate.nn.EventFixedProb(self.n_inh, self.num, 0.02, 6.7 * u.mS),
             syn=brainstate.nn.Expon.desc(self.num, tau=10. * u.ms),
             out=brainstate.nn.COBA.desc(E=-80. * u.mV),
             post=self.N
@@ -109,6 +109,6 @@ pip install brainunit --upgrade
 
 
 
-## See also the BDP ecosystem
+## See also the ecosystem
 
-We are building the [brain dynamics programming (BDP) ecosystem](https://ecosystem-for-brain-dynamics.readthedocs.io/). [brainunit](https://github.com/chaobrain/brainunit) has been deeply integrated into our BDP ecosystem.
+We are building the [brain modeling ecosystem](https://brainmodeling.readthedocs.io/). [brainunit](https://github.com/chaobrain/brainunit) has been deeply integrated into our ecosystem.
