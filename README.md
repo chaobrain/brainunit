@@ -20,7 +20,7 @@
 
 
 
-[BrainUnit](https://github.com/chaobrain/brainunit) provides physical units and unit-aware mathematical system in JAX for brain dynamics modeling. It introduces rigoirous physical units into high-performance AI-driven abstract numerical computing. 
+[BrainUnit](https://github.com/chaobrain/brainunit) provides physical units and unit-aware mathematical system in JAX for brain dynamics modeling. It introduces rigorous physical units into high-performance AI-driven abstract numerical computing. 
 
 BrainUnit is initially designed to enable unit-aware computations in brain dynamics modeling (see our [BDP ecosystem](https://ecosystem-for-brain-dynamics.readthedocs.io/)). However, its features and capacities can be applied to general domains in scientific computing and AI4Science. Starting in 2025/02, BrainUnit has been fully integrated into [SAIUnit](https://github.com/chaobrain/saiunit) (the **Unit** system for **S**cientific **AI**). 
 
@@ -55,7 +55,7 @@ A quick example for this kind of integration:
 ```python
 
 import braintools
-import brainevent
+import brainevent.nn
 import brainstate
 import brainunit as u
 
@@ -108,6 +108,21 @@ pip install brainunit --upgrade
 ```
 
 
+## Citation
+
+```bibtex
+@article{wang2025integrating,
+  title={Integrating physical units into high-performance AI-driven scientific computing},
+  author={Wang, Chaoming and He, Sichao and Luo, Shouwei and Huan, Yuxiang and Wu, Si},
+  journal={Nature Communications},
+  volume={16},
+  number={1},
+  pages={3609},
+  year={2025},
+  publisher={Nature Publishing Group UK London},
+  url={https://doi.org/10.1038/s41467-025-58626-4}
+}
+```
 
 ## See also the ecosystem
 
